@@ -3,6 +3,10 @@
 A small static site that explains the NANDA Index (the why, what and how) plus a FAQ, built in the
 Swiss/editorial style of the NANDA Hack site.
 
+> This `big-picture` branch is a non-technical version of the same site: the jargon is removed and
+> swapped for everyday analogies (a verified phone book, ID cards, a switchboard). The `main` branch
+> has the technical version. Both share the same design.
+
 ## Pages
 
 - `index.html`: landing page covering why DNS is not enough, what the index is (lean record plus
@@ -21,7 +25,7 @@ Swiss/editorial style of the NANDA Hack site.
 
 ## Run locally
 
-It is plain static HTML, so any static server works:
+It is vanilla static HTML, so any static server works:
 
 ```bash
 python3 -m http.server 4321

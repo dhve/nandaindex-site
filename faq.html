@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>FAQ · NANDA Index</title>
-  <meta name="description" content="Frequently asked questions about the NANDA Index: AgentFacts, the quilt model, privacy, revocation, and how it relates to MCP, A2A and NLWeb." />
+  <meta name="description" content="Straightforward answers about the NANDA Index: what an AI agent is, how trust works, privacy, and how this is different from a normal web directory." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -13,14 +13,14 @@
   <header class="topbar">
     <div class="brand">
       <a href="index.html" class="brand-link"><strong>NANDA</strong> Index</a>
-      <span class="tag">Working draft v0.3 · Project NANDA</span>
+      <span class="tag">The big picture · Project NANDA</span>
     </div>
     <nav class="navlinks">
-      <a href="index.html#why">Why</a>
-      <a href="index.html#what">What</a>
+      <a href="index.html#why">Why it matters</a>
+      <a href="index.html#what">What it is</a>
       <a href="index.html#how">How it works</a>
       <a href="faq.html" class="active">FAQ</a>
-      <a href="https://nandaindex.org" target="_blank" rel="noopener">Resolve →</a>
+      <a href="https://nandaindex.org" target="_blank" rel="noopener">Try it →</a>
     </nav>
   </header>
 
@@ -28,9 +28,9 @@
 
     <!-- ============ FAQ HERO ============ -->
     <section class="faq-hero">
-      <p class="eyebrow"><span class="mk">FAQ</span> Everything you wanted to ask</p>
-      <h1>Questions about the <span style="background:var(--brand-yellow);padding:0 8px;border-radius:4px;">NANDA Index</span>.</h1>
-      <p class="lede">The short version of the architecture, the trust model, and how it fits with the protocols you already use. For the full detail, read <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Beyond DNS</a>.</p>
+      <p class="eyebrow"><span class="mk">FAQ</span> The questions people ask first</p>
+      <h1>Common questions about the <span style="background:var(--brand-yellow);padding:0 8px;border-radius:4px;">NANDA Index</span>.</h1>
+      <p class="lede">No background needed. If you want the deeper technical detail later, the <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">research paper</a> has all of it.</p>
     </section>
 
     <!-- THE BASICS -->
@@ -38,155 +38,118 @@
       <p class="gh">The basics</p>
 
       <details class="faq" open>
-        <summary>What is the NANDA Index? <span class="sign">+</span></summary>
+        <summary>What is the NANDA Index, in one sentence? <span class="sign">+</span></summary>
         <div class="faq-body">
-          <p>The NANDA Index is a lean, DNS-inspired index for the Internet of AI Agents. It maps an agent's identity to a tiny, cryptographically signed record called an <code>AgentAddr</code>, which in turn points to dynamic, verifiable <strong>AgentFacts</strong>.</p>
-          <p>Think of it as the layer that answers "who is this agent, where do I reach it, and can I trust what it claims?" without forcing the whole web to be rebuilt. NANDA stands for Networked AI Agents in a Decentralized Architecture.</p>
+          <p>It is a trusted, tamper-proof directory that lets AI agents find each other and prove who they are, like a verified phone book for software that works on your behalf.</p>
         </div>
       </details>
 
       <details class="faq">
-        <summary>Why can't DNS just handle AI agents? <span class="sign">+</span></summary>
+        <summary>What is an "AI agent"? <span class="sign">+</span></summary>
         <div class="faq-body">
-          <p>DNS, BGP and WHOIS were designed for millions of mostly static records that change on a minute-to-hour cycle. Autonomous agents are different: they may spawn, migrate and rotate endpoints every few seconds, and there can be billions of them.</p>
-          <p>DNS also only proves <strong>domain ownership</strong>. A TLS certificate says nothing about an agent's code, behaviour or whether its claimed capabilities are real. NANDA adds signed capability proofs, sub-second revocation, privacy-preserving lookups and an append-only audit trail that DNS was never meant to provide.</p>
+          <p>An AI agent is a piece of software that can do tasks for you on its own: booking an appointment, comparing prices, answering customers, or handing a job off to another agent. Think of it as a digital assistant that can take action, not just chat.</p>
+          <p>The expectation is that there will soon be enormous numbers of them, run by companies, governments and individuals, all needing to work together.</p>
         </div>
       </details>
 
       <details class="faq">
-        <summary>Is NANDA trying to replace DNS or the web? <span class="sign">+</span></summary>
+        <summary>Why can't we just use what the internet already has? <span class="sign">+</span></summary>
         <div class="faq-body">
-          <p>No. NANDA is deliberately additive. It introduces exactly one constraint-shifting primitive (a lean, signed record that resolves to verifiable facts) and leaves the layers that already scale, such as HTTPS, CDNs and existing registries, untouched.</p>
-          <p>The goal is a flexible substrate for agent discovery, routing and capability negotiation that sits alongside today's infrastructure rather than tearing it down.</p>
-        </div>
-      </details>
-    </div>
-
-    <!-- ARCHITECTURE -->
-    <div class="faq-group">
-      <p class="gh">Architecture</p>
-
-      <details class="faq">
-        <summary>What are AgentFacts? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p><strong>AgentFacts</strong> are self-describing <code>JSON-LD</code> documents, each signed as a W3C Verifiable Credential. They carry the things that actually change: endpoint lists, capability descriptors, telemetry configuration and authentication methods.</p>
-          <p>Because facts live outside the index, an agent can update its capabilities and endpoints continuously without ever writing to the index. The index only stores a pointer (<code>facts_url</code>) and a signature.</p>
+          <p>The internet's current address book was built for websites that rarely change. AI agents are different: there can be billions of them, they appear and move constantly, and you need to know whether to trust them.</p>
+          <p>The old system also only proves a name. It cannot tell you that an agent is honest, that it can really do what it claims, or instantly cut off one that turns malicious. NANDA adds those missing pieces.</p>
         </div>
       </details>
 
       <details class="faq">
-        <summary>What are the three layers of the architecture? <span class="sign">+</span></summary>
+        <summary>Does this replace the internet? <span class="sign">+</span></summary>
         <div class="faq-body">
-          <p><strong>1. Lean Index (anchor).</strong> A decentralized mapping from agent IDs to an <code>AgentAddr</code> of roughly 120 bytes, holding a DID, TTL, pointers and an Ed25519 signature.</p>
-          <p><strong>2. AgentFacts (metadata).</strong> Signed JSON-LD documents the agent updates independently, split across a primary URL and a privacy-preserving private URL.</p>
-          <p><strong>3. Dynamic Resolution (routing).</strong> Latency, privacy and resilience-aware endpoint selection using static endpoints (TTL 1 to 6 hours), an adaptive resolver for geo load-balancing and DDoS mitigation, and rotating endpoints (TTL 5 to 15 minutes).</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>What does the AgentAddr record actually contain? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>A minimal set of static fields: a decentralized identifier (<code>id</code>), a <code>ttl</code>, a <code>facts_url</code>, an optional <code>private_facts_url</code>, an <code>adaptive_resolver_url</code> and a <code>signature</code>. That is roughly all it takes to stay under 120 bytes per record.</p>
-          <p>Keeping the record this small is what lets the index avoid the write overhead that would otherwise make billion-agent scale impossible. Everything dynamic is delegated to AgentFacts.</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>What is the "quilt" model? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>The index is envisioned as a quilt stitched across many kinds of registries: NANDA-native agents, enterprise agent stores, government registries, Web3 marketplaces, IoT devices, MCP servers and NLWeb agents.</p>
-          <p>Some agents are registered directly and are fully visible. Others are administered by an external registry and are visible only to varying degrees, for example <code>@company:shop</code> versus a routed <code>@company</code>. NANDA does not need to govern every agent; it simply holds a verifiable pointer to the right discovery object.</p>
+          <p>No. It sits on top of the internet we already have and fills one specific gap: helping agents find and trust each other. Everything else, like websites and apps, keeps working exactly as before.</p>
         </div>
       </details>
     </div>
 
-    <!-- TRUST & PRIVACY -->
+    <!-- TRUST & SAFETY -->
     <div class="faq-group">
-      <p class="gh">Trust &amp; privacy</p>
+      <p class="gh">Trust &amp; safety</p>
 
       <details class="faq">
-        <summary>What does "verify on claim, authenticate on update, attest on read" mean? <span class="sign">+</span></summary>
+        <summary>How does it know an agent is trustworthy? <span class="sign">+</span></summary>
         <div class="faq-body">
-          <p>It is the trust lifecycle of an entry. <strong>Verify on claim:</strong> when an entity claims an agent identity, ownership is verified. <strong>Authenticate on update:</strong> every change to the record or its facts must be cryptographically authenticated. <strong>Attest on read:</strong> when someone resolves the agent, they receive signed attestations they can independently check.</p>
-          <p>The effect is that trust is established once and re-checked continuously, rather than assumed because a lookup succeeded.</p>
+          <p>An agent cannot simply claim what it can do. Its identity and abilities are checked and digitally signed by a trusted source, a bit like a verified badge or a notarized document.</p>
+          <p>Anyone looking up the agent can confirm that seal for themselves, so they are not just taking the agent's word for it.</p>
         </div>
       </details>
 
       <details class="faq">
-        <summary>How does NANDA preserve privacy? <span class="sign">+</span></summary>
+        <summary>Can it be turned off if an agent goes bad? <span class="sign">+</span></summary>
         <div class="faq-body">
-          <p>Standard lookups leak who is asking for what, which enables passive tracking. NANDA uses <strong>dual-path resolution</strong>: a public <code>PrimaryFactsURL</code> and a <code>PrivateFactsURL</code> that can be hosted on third-party or decentralized storage (IPFS, Tor-style relays, a CDN or an enterprise bucket).</p>
-          <p>This supports least-disclosure, unlinkable queries and split-horizon governance, where different requesters can be given different answers, with tamper-evident audit logs. The trade-off is a small added latency, on the order of tens of milliseconds.</p>
+          <p>Yes, and quickly. If an agent is hacked or starts misbehaving, its verified status can be revoked in under a second, so others stop trusting it almost immediately.</p>
+          <p>That is a big improvement over today's systems, where cutting off trust can take hours.</p>
         </div>
       </details>
 
       <details class="faq">
-        <summary>How fast is revocation and key rotation? <span class="sign">+</span></summary>
+        <summary>Does looking something up expose my privacy? <span class="sign">+</span></summary>
         <div class="faq-body">
-          <p>Sub-second. Credentials reference a <strong>VC status list</strong> that can mark an agent's credentials revoked in under a second, and short-lived verifiable credentials (often under five minutes) limit the blast radius of any compromise.</p>
-          <p>This is a deliberate contrast with certificate ecosystems where revocation can take hours to propagate.</p>
+          <p>No. The directory is designed so you can find an agent without revealing who you are or what you are looking for. Different people can even be shown different, appropriate details.</p>
+          <p>There is also a tamper-proof record of changes, so misbehaviour can be traced without putting everyone's lookups on display.</p>
         </div>
       </details>
 
       <details class="faq">
-        <summary>What stops an agent from lying about its capabilities? <span class="sign">+</span></summary>
+        <summary>Who is in charge of it? Is it one company? <span class="sign">+</span></summary>
         <div class="faq-body">
-          <p>Capabilities are not self-asserted prose. They are schema-validated claims signed as W3C Verifiable Credentials, with issuers such as enterprises, consortia or federated certification authorities that can cross-sign each other within trust zones.</p>
-          <p>Each claim is anchored to an issuer ID with a revocation status, which directly targets capability spoofing, impersonation and supply-chain poisoning.</p>
+          <p>No single company owns it. It is decentralized: the listings are spread out and signed, and each agent or organization keeps its own details. That means it does not depend on one company staying online or behaving well.</p>
         </div>
       </details>
     </div>
 
-    <!-- ECOSYSTEM -->
+    <!-- COMPARISONS & MORE -->
     <div class="faq-group">
-      <p class="gh">Ecosystem &amp; usage</p>
+      <p class="gh">Comparisons &amp; more</p>
 
       <details class="faq">
-        <summary>How does NANDA relate to MCP, A2A and NLWeb? <span class="sign">+</span></summary>
+        <summary>How is this different from a normal web directory or search? <span class="sign">+</span></summary>
         <div class="faq-body">
-          <p>They solve different problems. MCP (Model Context Protocol), A2A (Agent-to-Agent) and NLWeb describe how agents and tools <strong>communicate</strong>. NANDA is the layer underneath that handles <strong>discovery, identity and trust</strong> across all of them.</p>
-          <p>An MCP server, an A2A agent and an NLWeb agent can each appear as a patch in the NANDA quilt, which is what makes cross-protocol interoperability possible rather than leaving each ecosystem isolated.</p>
+          <p>A normal directory lists names and addresses. NANDA adds proof: it verifies who each agent is, confirms what it can do, keeps that information current, and can withdraw trust instantly. It is built for software acting on its own, not for people browsing pages.</p>
         </div>
       </details>
 
       <details class="faq">
-        <summary>Is the index centralized? <span class="sign">+</span></summary>
+        <summary>I have heard of MCP, A2A and similar. How does this relate? <span class="sign">+</span></summary>
         <div class="faq-body">
-          <p>No. The index is a decentralized, federated mapping, and AgentFacts are hosted by the agents and registries themselves on self-selected storage. Records are signed and cacheable, so resolution does not depend on a single authority being online.</p>
-          <p>Decentralized publishing is what lets the system absorb very high update rates without an index write bottleneck.</p>
+          <p>Those are different tools that describe how agents <strong>talk</strong> to each other. NANDA is the layer underneath that handles <strong>finding and trusting</strong> them. They work together: an agent using any of those can still be listed and verified in the NANDA directory.</p>
         </div>
       </details>
 
       <details class="faq">
-        <summary>How do I register or resolve an agent? <span class="sign">+</span></summary>
+        <summary>Can I see it or try it? <span class="sign">+</span></summary>
         <div class="faq-body">
-          <p>You can browse the live directory and resolve any agent identity to its discovery object at <a href="https://nandaindex.org" target="_blank" rel="noopener">nandaindex.org</a>. Registration is available to organizations and registries that want their agents indexed.</p>
-          <p>Under the hood, resolving an identity returns the AgentAddr, which you follow to the AgentFacts and then to a live endpoint via the dynamic resolution layer.</p>
+          <p>Yes. You can browse the live directory at <a href="https://nandaindex.org" target="_blank" rel="noopener">nandaindex.org</a> and look up an agent's entry. Organizations can also register their agents to be listed.</p>
         </div>
       </details>
 
       <details class="faq">
-        <summary>Who is building NANDA, and what is its status? <span class="sign">+</span></summary>
+        <summary>Who is building this, and where can I learn more? <span class="sign">+</span></summary>
         <div class="faq-body">
-          <p>NANDA is a research initiative led from MIT (Project NANDA), with collaborators across industry and academia including contributors from Cisco, CMU, TCS and others. It grew out of the MIT and Cisco Outshift collaboration on the agentic web.</p>
-          <p>The architecture is published as a working draft (v0.3, request for comments), so specifics are expected to evolve. Start with <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Beyond DNS</a> and the <a href="https://arxiv.org/abs/2508.03101" target="_blank" rel="noopener">enterprise perspective</a> paper.</p>
+          <p>It is a research effort led from MIT, called Project NANDA, with collaborators across industry and academia including Cisco and others. It is still an early, evolving project.</p>
+          <p>Good next steps: <a href="https://projectnanda.org" target="_blank" rel="noopener">projectnanda.org</a> for the overview, or the <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">research paper</a> if you want the full technical detail.</p>
         </div>
       </details>
     </div>
 
     <div class="hero-cta" style="margin-top:8px;">
-      <a class="btn primary" href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Read Beyond DNS <span class="arr">→</span></a>
-      <a class="btn" href="index.html">Back to overview</a>
+      <a class="btn primary" href="index.html">Back to the overview <span class="arr">→</span></a>
+      <a class="btn" href="https://nandaindex.org" target="_blank" rel="noopener">Try the live directory</a>
     </div>
 
   </main>
 
   <!-- ============ FOOTER ============ -->
   <footer class="bottom">
-    <span>Project NANDA · MIT Media Lab. For research and discussion. v0.3, request for comments.</span>
+    <span>Project NANDA · MIT Media Lab. The big picture, for everyone.</span>
     <span class="fl">
       <a href="index.html">Overview</a>
-      <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Beyond DNS</a>
       <a href="https://projectnanda.org" target="_blank" rel="noopener">projectnanda.org</a>
     </span>
   </footer>
