@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NANDA Index · The index for the Internet of AI Agents</title>
+  <meta name="description" content="The NANDA Index: a lean, DNS-inspired index that resolves any agent identity to dynamic, cryptographically verifiable AgentFacts. Discovery, identity and authentication for the Internet of AI Agents." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============ TOPBAR ============ -->
+  <header class="topbar">
+    <div class="brand">
+      <a href="index.html" class="brand-link"><strong>NANDA</strong> Index</a>
+      <span class="tag">Working draft v0.3 · Project NANDA</span>
+    </div>
+    <nav class="navlinks">
+      <a href="#why">Why</a>
+      <a href="#what">What</a>
+      <a href="#how">How it works</a>
+      <a href="faq.html">FAQ</a>
+      <a href="https://nandaindex.org" target="_blank" rel="noopener">Resolve →</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <p class="eyebrow"><span class="mk">NANDA</span> Networked AI Agents in a Decentralized Architecture</p>
+      <h1>The index for the <span class="hl">Internet of AI Agents</span>.</h1>
+      <p class="lede">
+        The web is poised to host billions of autonomous agents that negotiate, delegate and migrate
+        in milliseconds. The NANDA Index is a minimal, DNS-inspired layer that resolves any agent
+        identity to dynamic, cryptographically signed <code class="tok">AgentFacts</code> for
+        discovery, authentication and trust, <strong>without abandoning existing web infrastructure</strong>.
+      </p>
+
+      <div class="hero-cta">
+        <a class="btn primary" href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Read the paper <span class="arr">→</span></a>
+        <a class="btn" href="https://nandaindex.org" target="_blank" rel="noopener">Explore the index</a>
+        <a class="btn" href="faq.html">FAQ</a>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="num">≤120<small> B</small></div><div class="lbl">lean index record</div></div>
+        <div class="stat"><div class="num">&lt;1<small> s</small></div><div class="lbl">global resolution</div></div>
+        <div class="stat"><div class="num">10⁴<small>×</small></div><div class="lbl">fewer index writes</div></div>
+        <div class="stat"><div class="num">&lt;1<small> s</small></div><div class="lbl">revocation &amp; key rotation</div></div>
+      </div>
+    </section>
+
+    <!-- ============ WHY ============ -->
+    <section class="panel" id="why">
+      <header class="panel-head">
+        <h2>Why</h2>
+        <span class="kld">DNS was built for sites, not agents</span>
+      </header>
+      <div class="panel-body">
+        <p class="panel-intro">
+          A TLS certificate proves you own a domain. It says nothing about an agent's code, its
+          behaviour, or whether its capabilities are real. As workloads shift from minute-to-hour
+          update cycles to millisecond orchestration, five pressures break the current stack.
+        </p>
+        <div class="features">
+          <div class="feature">
+            <span class="fnum">01</span>
+            <h3>Index writes &amp; delay</h3>
+            <p>DNS, BGP and WHOIS were built for millions of static records, not billions of updates per hour or sub-second worldwide sync.</p>
+          </div>
+          <div class="feature">
+            <span class="fnum">02</span>
+            <h3>Trust gap</h3>
+            <p>Owning a domain is not the same as proving an agent's behaviour. The web needs signed capability proofs and instant revocation.</p>
+          </div>
+          <div class="feature">
+            <span class="fnum">03</span>
+            <h3>Privacy &amp; split-horizon</h3>
+            <p>Today's lookups expose who is asking for what. Enterprises need private, split-horizon resolution and tamper-evident audit logs.</p>
+          </div>
+          <div class="feature">
+            <span class="fnum">04</span>
+            <h3>Routing limits</h3>
+            <p>Fixed A and AAAA records cannot keep up with agents that move every few seconds or need geo-based DDoS shuffling.</p>
+          </div>
+          <div class="feature">
+            <span class="fnum">05</span>
+            <h3>Governance &amp; liability</h3>
+            <p>Without a transparent, append-only log, no one can prove compliance or assign blame when agents misbehave across borders.</p>
+          </div>
+          <div class="feature accent">
+            <span class="fnum">THE BET</span>
+            <h3>One index, not a rebuild</h3>
+            <p>Decouple identity from metadata, support multi-hop resolution, and provide a flexible substrate for discovery, routing and capability negotiation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WHAT ============ -->
+    <section class="panel" id="what">
+      <header class="panel-head">
+        <h2>What</h2>
+        <span class="kld">Lean record · verifiable AgentFacts</span>
+      </header>
+      <div class="panel-body">
+        <p class="panel-intro">
+          NANDA pairs a lean record holding only essential static metadata with a self-describing
+          <code class="tok">AgentFacts</code> schema (signed JSON-LD) that lets agents update
+          capabilities, endpoints and authentication without ever touching the index. The result is a
+          lightweight, horizontally scalable foundation for secure, trust-aware collaboration, with
+          five concrete guarantees.
+        </p>
+
+        <div class="glist">
+          <div class="gitem">
+            <span class="gn">1</span>
+            <div class="gtxt"><h3>A quilt-like index</h3><p>NANDA-native agents and third-party agents from existing registries are both discoverable through one index.</p></div>
+          </div>
+          <div class="gitem">
+            <span class="gn">2</span>
+            <div class="gtxt"><h3>Rapid global resolution</h3><p>Newly spawned agents become resolvable worldwide in under a second of global propagation.</p></div>
+          </div>
+          <div class="gitem">
+            <span class="gn">3</span>
+            <div class="gtxt"><h3>Sub-second revocation &amp; key rotation</h3><p>Credential revocation and key rotation propagate in under a second through a VC status list.</p></div>
+          </div>
+          <div class="gitem">
+            <span class="gn">4</span>
+            <div class="gtxt"><h3>Schema-validated capability assertions</h3><p>Capabilities are validated against a schema and signed as W3C Verifiable Credentials, not self-asserted prose.</p></div>
+          </div>
+          <div class="gitem">
+            <span class="gn">5</span>
+            <div class="gtxt"><h3>Privacy-preserving discovery</h3><p>Least-disclosure, unlinkable lookups work across organisational boundaries without leaking who asked.</p></div>
+          </div>
+        </div>
+
+        <p class="panel-intro" style="margin-top:22px;">
+          <strong>The quilt.</strong> NANDA does not need to authorize or govern every agent on the web.
+          Commercial, government and individual registries decide what is visible; the index merely
+          holds a verifiable pointer to the right discovery object.
+        </p>
+        <div class="quilt-tags">
+          <span class="qtag"><span class="dot"></span> NLWeb agents</span>
+          <span class="qtag"><span class="dot"></span> NANDA native <code>@agentx</code></span>
+          <span class="qtag"><span class="dot"></span> IoT agents</span>
+          <span class="qtag"><span class="dot"></span> MCP servers</span>
+          <span class="qtag"><span class="dot"></span> Enterprise <code>@company:shop</code></span>
+          <span class="qtag"><span class="dot"></span> Government <code>@japan:shop</code></span>
+          <span class="qtag"><span class="dot"></span> .well-known URN</span>
+          <span class="qtag"><span class="dot"></span> Decentralized <code>@DID:company</code></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HOW ============ -->
+    <section class="panel" id="how">
+      <header class="panel-head">
+        <h2>How it works</h2>
+        <span class="kld">Three layers</span>
+      </header>
+      <div class="panel-body">
+        <p class="panel-intro">
+          The architecture cleanly separates static identity, verifiable metadata and dynamic routing.
+          That separation cuts index write load by roughly 10,000x while keeping global resolution
+          under a second.
+        </p>
+
+        <div class="features" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px;">
+          <div class="feature">
+            <span class="fnum">LAYER 01 · ANCHOR</span>
+            <h3>Lean Index</h3>
+            <p>A decentralized mapping from agent IDs to a tiny <code>AgentAddr</code> (about 120 bytes) holding a DID, TTL, pointers and an Ed25519 signature. Cacheable, signed, tamper-resistant.</p>
+          </div>
+          <div class="feature">
+            <span class="fnum">LAYER 02 · METADATA</span>
+            <h3>AgentFacts</h3>
+            <p>Self-describing JSON-LD documents, each a W3C Verifiable Credential, carrying endpoints, capabilities and auth. Agents update them independently, split across a primary and a privacy-preserving URL.</p>
+          </div>
+          <div class="feature">
+            <span class="fnum">LAYER 03 · ROUTING</span>
+            <h3>Dynamic Resolution</h3>
+            <p>Latency, privacy and resilience-aware endpoint selection: static endpoints (TTL 1 to 6h), an adaptive resolver for geo load-balancing and DDoS mitigation, and rotating endpoints (TTL 5 to 15m).</p>
+          </div>
+        </div>
+
+        <pre class="codeblock"><span class="c-head">// AgentAddr — the lean index record an identity resolves to</span>
+<span class="p">{</span>
+  <span class="k">"id"</span><span class="p">:</span> <span class="s">"did:nanda:@japan:shop"</span><span class="p">,</span>
+  <span class="k">"ttl"</span><span class="p">:</span> <span class="n">3600</span><span class="p">,</span>                 <span class="d">// seconds</span>
+  <span class="k">"facts_url"</span><span class="p">:</span> <span class="s">"https://facts.example/agent.jsonld"</span><span class="p">,</span>
+  <span class="k">"private_facts_url"</span><span class="p">:</span> <span class="s">"ipfs://bafy.../facts"</span><span class="p">,</span>
+  <span class="k">"adaptive_resolver_url"</span><span class="p">:</span> <span class="s">"https://r.nanda/agent"</span><span class="p">,</span>
+  <span class="k">"signature"</span><span class="p">:</span> <span class="s">"ed25519:9f3c...c1a"</span>
+<span class="p">}</span></pre>
+        <div class="code-meta">
+          <span class="badge l1">≤ 120 bytes</span>
+          <span class="badge l2">Ed25519 signed</span>
+          <span class="badge">resolves to verifiable AgentFacts</span>
+        </div>
+
+        <div class="principle">
+          <span class="badge ink">Verify on claim</span>
+          <span class="badge ink">Authenticate on update</span>
+          <span class="badge ink">Attest on read</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PRIOR WORK ============ -->
+    <section class="panel" id="reading">
+      <header class="panel-head">
+        <h2>Prior work &amp; background</h2>
+        <span class="kld">Papers · announcements · write-ups</span>
+      </header>
+      <div class="panel-body">
+        <div class="linkrows">
+          <a class="linkrow" href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">
+            <span class="lr-kind">arXiv 2507.14263</span>
+            <span class="lr-main"><h3>Beyond DNS: Unlocking the Internet of AI Agents</h3><p>The foundational NANDA Index and Verified AgentFacts architecture, Raskar et al. (MIT). The why and what of the whole project.</p></span>
+            <span class="lr-arrow">↗</span>
+          </a>
+          <a class="linkrow" href="https://arxiv.org/abs/2508.03101" target="_blank" rel="noopener">
+            <span class="lr-kind">arXiv 2508.03101</span>
+            <span class="lr-main"><h3>Using the NANDA Index in Practice</h3><p>An enterprise perspective: Zero Trust Agentic Access, capability attestation, and interoperability across MCP, A2A and NLWeb.</p></span>
+            <span class="lr-arrow">↗</span>
+          </a>
+          <a class="linkrow" href="https://outshift.cisco.com/blog/ai-ml/outshift-mit-agentic-web" target="_blank" rel="noopener">
+            <span class="lr-kind">Cisco × MIT</span>
+            <span class="lr-main"><h3>Building the agentic web</h3><p>The original Cisco Outshift and MIT collaboration announcing the push toward an open, agentic internet built on NANDA.</p></span>
+            <span class="lr-arrow">↗</span>
+          </a>
+          <a class="linkrow" href="https://www.cloudnativenotes.com/post/navigating-internet-of-agents/" target="_blank" rel="noopener">
+            <span class="lr-kind">Cloud Native Notes</span>
+            <span class="lr-main"><h3>Navigating the Internet of Agents</h3><p>An independent walkthrough of the emerging agent-discovery landscape and where NANDA fits within it.</p></span>
+            <span class="lr-arrow">↗</span>
+          </a>
+          <a class="linkrow" href="https://projectnanda.org" target="_blank" rel="noopener">
+            <span class="lr-kind">MIT Media Lab</span>
+            <span class="lr-main"><h3>Project NANDA</h3><p>The home of the research initiative architecting the Internet of AI Agents: people, demos and the broader roadmap.</p></span>
+            <span class="lr-arrow">↗</span>
+          </a>
+          <a class="linkrow" href="faq.html">
+            <span class="lr-kind">On this site</span>
+            <span class="lr-main"><h3>Frequently asked questions</h3><p>AgentFacts, the quilt model, privacy, how NANDA relates to MCP and A2A, and how to register or resolve an agent.</p></span>
+            <span class="lr-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="bottom">
+    <span>Project NANDA · MIT Media Lab. For research and discussion. v0.3, request for comments.</span>
+    <span class="fl">
+      <a href="faq.html">FAQ</a>
+      <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Beyond DNS</a>
+      <a href="https://projectnanda.org" target="_blank" rel="noopener">projectnanda.org</a>
+    </span>
+  </footer>
+
+</body>
+</html>
