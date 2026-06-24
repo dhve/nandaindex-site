@@ -29,12 +29,12 @@
     <!-- ============ HERO ============ -->
     <section class="hero">
       <p class="eyebrow"><span class="mk">NANDA</span> Networked AI Agents in a Decentralized Architecture</p>
-      <h1>The index for the <span class="hl">Internet of AI Agents</span>.</h1>
+      <h1>A global switchboard for the <span class="hl">Internet of AI Agents</span>.</h1>
       <p class="lede">
         The web is poised to host billions of autonomous agents that negotiate, delegate and migrate
-        in milliseconds. The NANDA Index is a minimal, DNS-inspired layer that resolves any agent
-        identity to dynamic, cryptographically signed <code class="tok">AgentFacts</code> for
-        discovery, authentication and trust, <strong>without abandoning existing web infrastructure</strong>.
+        in milliseconds. The NANDA Index resolves any agent identity to dynamic, cryptographically
+        signed <code class="tok">AgentFacts</code> — a minimal, DNS-inspired layer for discovery,
+        authentication and trust, <strong>without abandoning existing web infrastructure</strong>.
       </p>
 
       <div class="hero-cta">
@@ -108,9 +108,10 @@
         <p class="panel-intro">
           NANDA pairs a lean record holding only essential static metadata with a self-describing
           <code class="tok">AgentFacts</code> schema (signed JSON-LD) that lets agents update
-          capabilities, endpoints and authentication without ever touching the index. The result is a
-          lightweight, horizontally scalable foundation for secure, trust-aware collaboration, with
-          five concrete guarantees.
+          capabilities, endpoints and authentication without ever touching the index. In effect the
+          index is a global switchboard: it connects a request to the right discovery object, then
+          steps out of the way. The result is a lightweight, horizontally scalable foundation for
+          secure, trust-aware collaboration, with five concrete guarantees.
         </p>
 
         <div class="glist">
@@ -208,6 +209,68 @@
       </div>
     </section>
 
+    <!-- ============ RESOLVE ============ -->
+    <section class="panel" id="resolve">
+      <header class="panel-head">
+        <h2>Resolve</h2>
+        <span class="kld">One identity, four hops</span>
+      </header>
+      <div class="panel-body">
+        <p class="panel-intro">
+          Every agent identity resolves through the same sequence — whatever path it registered by.
+          The switchboard routes the first hop, then steps aside: hops 1–3 cache at the record TTL,
+          and after hop 4 NANDA leaves the critical path entirely.
+        </p>
+        <div class="resolve-top">
+          <code class="urn-pill">urn:ai:domain:acme.com:agent:time</code>
+          <button class="btn primary" id="traceBtn" type="button">▶ Trace</button>
+        </div>
+        <div class="trace-bar"><div class="trace-fill" id="traceFill"></div></div>
+        <div class="hops">
+          <div class="hop" data-hop="1">
+            <div class="hop-top"><span class="hn">1</span><span class="hdot"></span></div>
+            <h3>NANDA Index</h3>
+            <p class="hq">Who manages this identity?</p>
+            <div class="hio">
+              <div><span class="lab">in&nbsp;&nbsp;</span><span class="val">locator: urn:ai:domain:acme.com:agent:time</span></div>
+              <div><span class="lab">out&nbsp;</span><span class="val">IndexRecord { registry_url, media_type, ttl }</span></div>
+              <div class="hapi">GET /api/v1/resolve?locator=…</div>
+            </div>
+          </div>
+          <div class="hop" data-hop="2">
+            <div class="hop-top"><span class="hn">2</span><span class="hdot"></span></div>
+            <h3>Agent Source</h3>
+            <p class="hq">What is this agent’s entry?</p>
+            <div class="hio">
+              <div><span class="lab">in&nbsp;&nbsp;</span><span class="val">IndexRecord.registry_url + identifier</span></div>
+              <div><span class="lab">out&nbsp;</span><span class="val">CatalogEntry { url, displayName, tags }</span></div>
+              <div class="hapi">GET &lt;registry_url&gt;/agents/&lt;id&gt;</div>
+            </div>
+          </div>
+          <div class="hop" data-hop="3">
+            <div class="hop-top"><span class="hn">3</span><span class="hdot"></span></div>
+            <h3>Agent Card</h3>
+            <p class="hq">What can this agent do?</p>
+            <div class="hio">
+              <div><span class="lab">in&nbsp;&nbsp;</span><span class="val">CatalogEntry.url</span></div>
+              <div><span class="lab">out&nbsp;</span><span class="val">AgentCard { url, auth, skills, … }</span></div>
+              <div class="hapi">GET &lt;catalog_entry.url&gt;</div>
+            </div>
+          </div>
+          <div class="hop" data-hop="4">
+            <div class="hop-top"><span class="hn">4</span><span class="hdot"></span></div>
+            <h3>Talk with Agent</h3>
+            <p class="hq">Send a task directly.</p>
+            <div class="hio">
+              <div><span class="lab">in&nbsp;&nbsp;</span><span class="val">AgentCard.url + { message }</span></div>
+              <div><span class="lab">out&nbsp;</span><span class="val">Task result from agent runtime</span></div>
+              <div class="hapi">POST &lt;agent_card.url&gt;/run</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ PRIOR WORK ============ -->
     <section class="panel" id="reading">
       <header class="panel-head">
@@ -262,5 +325,42 @@
     </span>
   </footer>
 
+  <!-- four-hop resolve trace: progressive enhancement; the section is fully
+       legible with JS disabled, this only adds the step-through animation. -->
+  <script>
+    (function () {
+      var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var hops = Array.prototype.slice.call(document.querySelectorAll('.hop'));
+      var fill = document.getElementById('traceFill');
+      var btn = document.getElementById('traceBtn');
+      if (!hops.length) return;
+      var timers = [];
+      function paint(active) {
+        if (fill) fill.style.width = (active / hops.length * 100) + '%';
+        hops.forEach(function (el) {
+          var n = +el.getAttribute('data-hop');
+          el.classList.toggle('lit', n <= active);
+          el.classList.toggle('active', n === active);
+        });
+      }
+      function play() {
+        timers.forEach(clearTimeout); timers = [];
+        paint(0);
+        if (reduced) { paint(hops.length); return; }
+        for (var i = 1; i <= hops.length; i++) {
+          (function (step) { timers.push(setTimeout(function () { paint(step); }, step * 780)); })(i);
+        }
+      }
+      if (btn) btn.addEventListener('click', play);
+      if (reduced) { paint(hops.length); return; }
+      // auto-play once when the section scrolls into view
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) { if (e.isIntersecting) { play(); io.disconnect(); } });
+        }, { threshold: 0.35 });
+        io.observe(document.getElementById('resolve'));
+      } else { play(); }
+    })();
+  </script>
 </body>
 </html>

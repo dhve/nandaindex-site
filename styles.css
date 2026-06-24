@@ -350,3 +350,32 @@ details.faq .faq-body a { color: var(--ink); text-decoration: underline; text-un
   html { scroll-behavior: auto; }
   * { transition: none !important; }
 }
+
+/* ---------- resolve: four-hop trace ---------- */
+.resolve-top { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.urn-pill { font-family: var(--mono); font-size: 13px; background: var(--bg-2); border: 1px solid var(--rule); padding: 10px 13px; border-radius: 3px; }
+.trace-bar { height: 3px; background: rgba(14, 14, 14, .1); border-radius: 2px; overflow: hidden; margin-bottom: 18px; }
+.trace-fill { height: 100%; width: 0; background: var(--brand-yellow); transition: width .55s cubic-bezier(.4, 0, .2, 1); }
+
+.hops { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.hop { border: 1px solid var(--rule); border-radius: 4px; padding: 16px 16px 18px; background: #fff; transition: border-color .35s, background .35s; }
+.hop-top { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+.hop .hn { flex: none; width: 26px; height: 26px; border-radius: 4px; background: var(--bg-2); color: var(--muted); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 13px; font-weight: 700; transition: background .3s, color .3s; }
+.hop .hdot { width: 7px; height: 7px; border-radius: 50%; background: rgba(14, 14, 14, .16); transition: background .3s; }
+.hop h3 { font-size: 15px; font-weight: 600; letter-spacing: -.01em; margin: 0 0 4px; }
+.hop .hq { font-size: 13px; color: var(--muted); margin: 0 0 15px; line-height: 1.45; }
+.hop .hio { font-family: var(--mono); font-size: 10.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 7px; }
+.hop .hio .lab { color: #9a9890; }
+.hop .hio .val { color: #2a2a28; }
+.hop .hapi { margin-top: 3px; padding: 6px 8px; border-radius: 3px; background: var(--bg-2); color: #6b6258; }
+/* lit / active states added by the trace script (page is fully legible without JS) */
+.hop.lit { border-color: rgba(242, 196, 0, .55); }
+.hop.lit .hn { background: var(--brand-yellow); color: var(--ink); }
+.hop.lit .hdot { background: var(--brand-yellow); }
+.hop.lit .hapi { background: var(--brand-yellow-soft); color: var(--ink); }
+.hop.active { background: var(--brand-yellow-soft); border-color: var(--brand-yellow); }
+.hop.active .hdot { background: var(--ok); animation: pulseDot 1.2s infinite; }
+@keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(.82); } }
+
+@media (max-width: 860px) { .hops { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .hops { grid-template-columns: 1fr; } .resolve-top { justify-content: stretch; } }
