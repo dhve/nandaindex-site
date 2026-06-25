@@ -577,3 +577,9 @@ dl.sp-meta a:hover { text-decoration: underline; }
 .browse-head .browse-all:hover { text-decoration: underline; }
 .browse-sec .browse-intro { font-size: 14px; color: var(--muted); max-width: 60ch; margin: -8px 0 18px; line-height: 1.55; }
 .card-preview { text-decoration: none; color: inherit; }
+
+/* Respect reduced-motion for the catalog panel (the trace is gated in JS). */
+@media (prefers-reduced-motion: reduce) {
+  .slide-panel, .panel-scrim { animation: none; }
+  .card { transition: none; }
+}

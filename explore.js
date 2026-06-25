@@ -488,8 +488,7 @@
       '<section>' + (r.domain ? '<p class="sp-domain">' + esc(r.domain) + '</p>' : '') +
       '<p class="sp-desc">' + esc(r.description) + '</p>' +
       '<div class="chips" style="margin-top:12px;">' + chips + '</div></section>' +
-      '<section><p class="sp-label">Verification</p><div class="sp-vrow">' + emailBadge + statusBadge(r) +
-      '<span class="vbadge" style="background:var(--bg-2);color:var(--muted);">Signed record</span></div></section>' +
+      '<section><p class="sp-label">Verification</p><div class="sp-vrow">' + emailBadge + statusBadge(r) + '</div></section>' +
       '<section><p class="sp-label">Indexed agents</p><div class="sp-agents">' + agents + '</div></section>' +
       '<section><p class="sp-label">Capabilities</p><div class="sp-caps">' + caps + '</div></section>' +
       '<section><p class="sp-label">Record</p><dl class="sp-meta">' +
