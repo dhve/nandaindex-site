@@ -49,3 +49,12 @@ assert.deepStrictEqual(Object.keys(JSON.parse(json))[0], 'identifier');
 assert.ok(E.toMarkdown(rec).includes(rec.name), 'markdown includes name');
 
 console.log('ok - explore.js logic', E.DATA.length, 'records');
+
+// export shapes
+const md = E.toMarkdown(E.DATA[0]);
+assert.ok(md.startsWith('# '), 'markdown export should start with an H1 title');
+assert.ok(md.includes(E.DATA[0].identity), 'markdown must include the identifier');
+const parsed = JSON.parse(E.toJSON(E.DATA[0]));
+assert.equal(parsed.identifier, E.DATA[0].identity, 'JSON identifier matches');
+assert.equal(typeof parsed.email_verified, 'boolean', 'JSON carries email_verified');
+console.log('ok - export shapes');
