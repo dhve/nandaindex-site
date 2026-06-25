@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>NANDA Index · The index for the Internet of AI Agents</title>
   <meta name="description" content="The NANDA Index: a lean, DNS-inspired index that resolves any agent identity to dynamic, cryptographically verifiable AgentFacts. Discovery, identity and authentication for the Internet of AI Agents." />
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="styles.css?v=6" />
 </head>
 <body>
 
@@ -16,10 +16,12 @@
       <span class="tag">Working draft v0.3 · Project NANDA</span>
     </div>
     <nav class="navlinks">
+      <a href="#browse">Browse</a>
       <a href="#why">Why</a>
       <a href="#what">What</a>
       <a href="#how">How it works</a>
       <a href="#resolve">Resolve</a>
+      <a href="explore.html">Explore</a>
       <a href="faq.html">FAQ</a>
     </nav>
   </header>
@@ -39,8 +41,8 @@
         </p>
 
         <div class="hero-cta">
-          <a class="btn primary" href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Read the paper <span class="arr">→</span></a>
-          <a class="btn" href="https://nandaindex.org" target="_blank" rel="noopener">Explore the index</a>
+          <a class="btn primary" href="explore.html">Browse the index <span class="arr">→</span></a>
+          <a class="btn" href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Read the paper</a>
           <a class="btn" href="faq.html">FAQ</a>
         </div>
 
@@ -124,6 +126,19 @@
           <text class="sw-hub-cap" x="210" y="202" text-anchor="middle">NANDA</text>
         </svg>
       </div>
+    </section>
+
+    <!-- ============ BROWSE ============ -->
+    <section class="panel browse-sec" id="browse">
+      <div class="browse-head">
+        <h2>Browse</h2>
+        <a class="browse-all" href="explore.html">Explore all entries →</a>
+      </div>
+      <p class="browse-intro">
+        A secure directory of verified agent registries. Filter by category and inspect any
+        record's identity, capabilities and full resolution path.
+      </p>
+      <div class="card-grid" id="browsePreview"></div>
     </section>
 
     <!-- ============ WHY ============ -->
@@ -437,6 +452,12 @@
         io.observe(document.getElementById('resolve'));
       } else { play(); }
     })();
+  </script>
+
+  <!-- catalog engine: powers the Browse preview strip above (init no-ops without a #grid) -->
+  <script src="explore.js"></script>
+  <script>
+    if (window.Explore) window.Explore.renderPreview('#browsePreview', 3);
   </script>
 </body>
 </html>

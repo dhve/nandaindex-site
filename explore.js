@@ -432,6 +432,25 @@
     return '<span class="chip">' + esc(r.status) + '</span>';
   }
 
+  // Compact, non-interactive preview card that links to the catalog (used on the landing).
+  function previewCardHTML(r) {
+    var vmark = r.verified ? ICON.verified : '';
+    var chips = r.tags.slice(0, 3).map(function (t) { return '<span class="chip">' + esc(t) + '</span>'; }).join('');
+    return (
+      '<a class="card card-preview" href="explore.html" aria-label="' + esc(r.name) + ' — browse the index">' +
+      '<div class="card-head"><div class="title-line"><h3>' + esc(r.name) + '</h3>' + vmark + '</div>' +
+      '<span class="cat-pill" data-cat="' + esc(r.cat) + '">' + esc(CAT_LABEL[r.cat]) + '</span></div>' +
+      '<div class="identifier">' + esc(r.identity) + '</div>' +
+      '<p class="desc">' + esc(r.description) + '</p>' +
+      '<div class="chips">' + chips + '</div></a>'
+    );
+  }
+  function renderPreview(selector, n) {
+    var host = document.querySelector(selector);
+    if (!host) return;
+    host.innerHTML = sortRecords(DATA.slice(), 'recent').slice(0, n || 3).map(previewCardHTML).join('');
+  }
+
   function openPanel(key) {
     var r = DATA.filter(function (x) { return x.key === key; })[0];
     if (!r) return;
@@ -565,6 +584,7 @@
     init: init,
     openPanel: openPanel,
     closePanel: closePanel,
+    renderPreview: renderPreview,
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

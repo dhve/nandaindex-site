@@ -568,3 +568,12 @@ dl.sp-meta a:hover { text-decoration: underline; }
 .pt-row.lit .pt-api { background: var(--brand-yellow-soft); color: var(--ink); }
 .pt-row.done .pt-n { background: var(--ok); color: #fff; border-color: var(--ok); }
 .pt-row.done .pt-line { background: var(--brand-yellow); }
+
+/* ---------- landing Browse preview strip ---------- */
+.browse-sec { padding: 8px 0 8px; }
+.browse-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+.browse-head h2 { font-size: clamp(24px, 3.4vw, 34px); letter-spacing: -.02em; margin: 0; }
+.browse-head .browse-all { font-size: 13px; font-weight: 600; color: var(--hcl-blue); text-decoration: none; white-space: nowrap; }
+.browse-head .browse-all:hover { text-decoration: underline; }
+.browse-sec .browse-intro { font-size: 14px; color: var(--muted); max-width: 60ch; margin: -8px 0 18px; line-height: 1.55; }
+.card-preview { text-decoration: none; color: inherit; }
