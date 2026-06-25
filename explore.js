@@ -422,8 +422,121 @@
     if (btn) { btn.classList.add('copied'); setTimeout(function () { btn.classList.remove('copied'); }, 1100); }
   }
 
-  function openPanel(key) { /* full implementation added in the next task */ }
-  function closePanel() {}
+  var panelTimers = [];
+  var lastFocus = null;
+  function clearPanelTrace() { panelTimers.forEach(clearTimeout); panelTimers = []; }
+
+  function statusBadge(r) {
+    if (r.status === 'active') return '<span class="vbadge ok">● Active</span>';
+    if (r.status === 'pending') return '<span class="vbadge pending">◷ Pending</span>';
+    return '<span class="chip">' + esc(r.status) + '</span>';
+  }
+
+  function openPanel(key) {
+    var r = DATA.filter(function (x) { return x.key === key; })[0];
+    if (!r) return;
+    state.selected = r;
+    lastFocus = document.activeElement;
+    var panel = $('#slidePanel'), scrim = $('#scrim');
+
+    var vmark = r.verified ? ICON.verified : '';
+    var emailBadge = r.verified
+      ? '<span class="vbadge ok">✓ Email verified</span>'
+      : '<span class="vbadge pending">◷ Email unverified</span>';
+    var chips = r.tags.map(function (t) { return '<span class="chip">' + esc(t) + '</span>'; }).join('');
+    var agents = r.agents.map(function (a) {
+      return '<div class="sp-agent"><span class="an">' + esc(a.name) + '</span><span class="al">live</span></div>';
+    }).join('');
+    var caps = r.caps.map(function (c) { return '<span class="sp-cap">' + esc(c) + '</span>'; }).join('');
+    var pq = ['locator: ' + r.identity, r.host, 'card · ' + r.agents[0].name, 'live runtime endpoint'];
+    var ptrace = HOPS.map(function (h, i) {
+      var last = i === HOPS.length - 1;
+      return '<div class="pt-row" data-pt="' + h.n + '">' +
+        '<div class="pt-rail"><span class="pt-n">' + h.n + '</span>' + (last ? '' : '<span class="pt-line"></span>') + '</div>' +
+        '<div class="pt-body"><div class="pt-title">' + esc(h.title) + '</div>' +
+        '<div class="pt-q">' + esc(pq[i]) + '</div>' +
+        '<div class="pt-api">' + esc(h.api) + '</div></div></div>';
+    }).join('');
+
+    panel.innerHTML =
+      '<div class="sp-head"><div><span class="sp-kicker">Index record</span>' +
+      '<div class="sp-title"><h2>' + esc(r.name) + '</h2>' + vmark +
+      '<span class="cat-pill" data-cat="' + esc(r.cat) + '">' + esc(CAT_LABEL[r.cat]) + '</span></div>' +
+      '<div class="sp-idn">' + esc(r.identity) + '</div></div>' +
+      '<button class="sp-close" id="spClose" type="button" aria-label="Close">' +
+      '<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></button></div>' +
+      '<div class="sp-body">' +
+      '<section>' + (r.domain ? '<p class="sp-domain">' + esc(r.domain) + '</p>' : '') +
+      '<p class="sp-desc">' + esc(r.description) + '</p>' +
+      '<div class="chips" style="margin-top:12px;">' + chips + '</div></section>' +
+      '<section><p class="sp-label">Verification</p><div class="sp-vrow">' + emailBadge + statusBadge(r) +
+      '<span class="vbadge" style="background:var(--bg-2);color:var(--muted);">Signed record</span></div></section>' +
+      '<section><p class="sp-label">Indexed agents</p><div class="sp-agents">' + agents + '</div></section>' +
+      '<section><p class="sp-label">Capabilities</p><div class="sp-caps">' + caps + '</div></section>' +
+      '<section><p class="sp-label">Record</p><dl class="sp-meta">' +
+      '<dt>Media type</dt><dd class="mono">' + esc(r.mediaType) + '</dd>' +
+      '<dt>Hosting</dt><dd>' + esc(r.host) + '</dd>' +
+      '<dt>Region</dt><dd>' + esc(r.region) + '</dd>' +
+      '<dt>Version</dt><dd>' + esc(r.version) + '</dd>' +
+      '<dt>TTL</dt><dd>' + esc(r.ttl) + 's</dd>' +
+      '<dt>Created</dt><dd>' + esc(fmtDate(r.created)) + '</dd>' +
+      '<dt>Updated</dt><dd>' + esc(fmtDate(r.updated)) + '</dd></dl></section>' +
+      '<section><div class="sp-trace-head"><p class="sp-label" style="margin:0;">Resolution path</p>' +
+      '<button class="btn" id="spReplay" type="button">▶ Replay trace</button></div>' + ptrace + '</section>' +
+      '<section><p class="sp-label">Export</p><div class="sp-exports">' +
+      '<button class="ebtn primary" id="spJson">' + ICON.json + 'Download JSON</button>' +
+      '<button class="ebtn" id="spMd">' + ICON.md + 'Download Markdown</button>' +
+      '<button class="ebtn" id="spCopy">' + ICON.copy + 'Copy identifier</button></div></section>' +
+      '<a class="btn primary sp-cta" href="#" id="spOpen">Open agent card →</a>' +
+      '<section class="sp-json"><div class="sp-json-head"><p class="sp-label" style="margin:0;">Raw record</p>' +
+      '<button class="sp-copy" id="spRawCopy">Copy</button></div>' +
+      '<pre class="codeblock">' + esc(toJSON(r)) + '</pre></section>' +
+      '</div>';
+
+    scrim.hidden = false; panel.hidden = false;
+    document.body.style.overflow = 'hidden';
+    $('#spClose').addEventListener('click', closePanel);
+    $('#spReplay').addEventListener('click', playPanelTrace);
+    $('#spJson').addEventListener('click', function () { downloadJSON(r); });
+    $('#spMd').addEventListener('click', function () { downloadMarkdown(r); });
+    $('#spCopy').addEventListener('click', function (e) { copyIdentifier(r, e.currentTarget); });
+    $('#spOpen').addEventListener('click', function (e) { e.preventDefault(); });
+    $('#spRawCopy').addEventListener('click', function (e) {
+      if (navigator.clipboard) navigator.clipboard.writeText(toJSON(r));
+      e.currentTarget.textContent = 'Copied'; setTimeout(function () { e.currentTarget.textContent = 'Copy'; }, 1100);
+    });
+    $('#spClose').focus();
+    setTimeout(playPanelTrace, 380);
+  }
+
+  function closePanel() {
+    clearPanelTrace();
+    var panel = $('#slidePanel'), scrim = $('#scrim');
+    if (!panel || panel.hidden) return;
+    scrim.hidden = true; panel.hidden = true; panel.innerHTML = '';
+    document.body.style.overflow = '';
+    state.selected = null;
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  function paintPanelTrace(active) {
+    HOPS.forEach(function (h) {
+      var row = $('.pt-row[data-pt="' + h.n + '"]');
+      if (!row) return;
+      row.classList.toggle('lit', h.n <= active);
+      row.classList.toggle('done', h.n < active);
+      var n = row.querySelector('.pt-n');
+      if (n) n.textContent = h.n < active ? '✓' : String(h.n);
+    });
+  }
+  function playPanelTrace() {
+    clearPanelTrace();
+    paintPanelTrace(0);
+    if (REDUCED) { paintPanelTrace(HOPS.length); return; }
+    for (var i = 1; i <= HOPS.length; i++) {
+      (function (step) { panelTimers.push(setTimeout(function () { paintPanelTrace(step); }, step * 600)); })(i);
+    }
+  }
 
   function init() {
     if (!document.getElementById('grid')) return; // not the explore page
@@ -450,6 +563,8 @@
     toJSON: toJSON,
     toMarkdown: toMarkdown,
     init: init,
+    openPanel: openPanel,
+    closePanel: closePanel,
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
