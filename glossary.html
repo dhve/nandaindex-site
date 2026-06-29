@@ -43,32 +43,28 @@
         <section id="core">
           <h2>Core model</h2>
           <div class="gloss">
-            <div class="gloss-row"><div class="gloss-term">NandaIndex</div><div class="gloss-def">A federated resolution layer. An AI Catalog-formatted database of index records that maps a stable identity to the correct next discovery object.</div></div>
-            <div class="gloss-row"><div class="gloss-term">Switchboard</div><div class="gloss-def">The federation model: route the first resolution hop, then leave the critical path. NandaIndex bridges discovery systems rather than replacing them.</div></div>
+            <div class="gloss-row"><div class="gloss-term">NandaIndex</div><div class="gloss-def">A federated index of AI Catalog-formatted resolution records, a global switchboard for agent discovery. Each entry maps an identity to a discovery entry point. A distributed index of pointers rather than a centralized registry.</div></div>
+            <div class="gloss-row"><div class="gloss-term">Switchboard</div><div class="gloss-def">The global switchboard model: a federated resolution layer that maps identities to the appropriate discovery mechanism, bridging discovery systems rather than replacing them.</div></div>
             <div class="gloss-row"><div class="gloss-term">AI Catalog</div><div class="gloss-def">A typed, nestable, machine-readable container for heterogeneous AI artifacts (A2A cards, MCP descriptors, nested catalogs, tools, skills, datasets, gateways). Media type <code>application/ai-catalog+json</code>.</div></div>
             <div class="gloss-row"><div class="gloss-term">Catalog Entry</div><div class="gloss-def">A single record inside AI Catalog that maps an <code>identifier</code> to a target. NandaIndex uses it as its index-record format: <code>identifier</code>, <code>displayName</code>, <code>mediaType</code>, a <code>url</code> or inline <code>data</code>, <code>description</code>, <code>tags</code>, <code>publisher</code>, and <code>metadata</code>.</div></div>
             <div class="gloss-row"><div class="gloss-term">Publisher</div><div class="gloss-def">The identity that publishes an index record, given as an <code>identifier</code>, <code>displayName</code>, and <code>identityType</code> (dns, email, or system).</div></div>
             <div class="gloss-row"><div class="gloss-term">Discovery object</div><div class="gloss-def">The target an identity resolves to: a catalog, a DNS-AID record, an ADS entry, a gateway, a hosted agent card, or a sector registry.</div></div>
-            <div class="gloss-row"><div class="gloss-term">Resolution role</div><div class="gloss-def">A metadata hint (<code>org.projectnanda.resolutionRole</code>) describing how to treat the target, for example <code>dns-aid-pointer</code> or <code>personal-agent-card</code>.</div></div>
-            <div class="gloss-row"><div class="gloss-term">Identifier (URN / URI)</div><div class="gloss-def">The stable identity an entry resolves: <code>urn:ai:domain:</code>, <code>urn:ai:email:</code>, or <code>urn:ai:system:</code>.</div></div>
-            <div class="gloss-row"><div class="gloss-term">AgentFacts</div><div class="gloss-def">A signed, self-describing metadata document for an agent, from the NANDA Index architecture.</div></div>
-          </div>
+            <div class="gloss-row"><div class="gloss-term">Resolution role</div><div class="gloss-def">The metadata field <code>org.projectnanda.resolutionRole</code>, which in the index-record examples carries values such as <code>nested-ai-catalog</code>, <code>dns-aid-pointer</code>, <code>smb-agent-card</code>, <code>personal-agent-card</code>, and <code>ard-endpoint</code>.</div></div>
+            <div class="gloss-row"><div class="gloss-term">Identifier (URN / URI)</div><div class="gloss-def">The stable identity an entry resolves: <code>urn:ai:domain:</code>, <code>urn:ai:email:</code>, or <code>urn:ai:system:</code>.</div></div>          </div>
         </section>
 
         <section id="mechanisms">
           <h2>Discovery mechanisms</h2>
           <div class="gloss">
             <div class="gloss-row"><div class="gloss-term">DNS-AID</div><div class="gloss-def">DNS-based agent identity discovery. Domain-controlled, fast, cacheable resolution through DNS records, published under the <code>_agents.&lt;domain&gt;</code> naming convention (for example <code>refunds._agents.skyblue.com</code>).</div></div>
-            <div class="gloss-row"><div class="gloss-term">AGNTCY</div><div class="gloss-def">Open-source collective building the Internet of Agents (Cisco Outshift, LangChain, Galileo); a Linux Foundation project.</div></div>
-            <div class="gloss-row"><div class="gloss-term">ADS (Agent Directory Service)</div><div class="gloss-def">AGNTCY backend registry using IPFS Kademlia DHT routing, OCI-aligned content addressing, and Sigstore-backed integrity verification.</div></div>
-            <div class="gloss-row"><div class="gloss-term">ARD (Agent Resource Discovery)</div><div class="gloss-def">A read-only standard finder API across conforming registries, used the same way against systems such as Hugging Face and GitHub.</div></div>
-            <div class="gloss-row"><div class="gloss-term">ANS</div><div class="gloss-def">Agent Name System. Provides identity and ownership proof.</div></div>
+            <div class="gloss-row"><div class="gloss-term">AGNTCY</div><div class="gloss-def">A Linux Foundation project. The global switchboard proposed by NANDA and AGNTCY was built jointly by Outshift (Cisco) and MIT.</div></div>
+            <div class="gloss-row"><div class="gloss-term">ADS (Agent Directory Service)</div><div class="gloss-def">AGNTCY distributed directory service implementing the discovery and infrastructure layers: content-addressed storage, distributed routing (DHT-based), and cryptographic signing and verification.</div></div>
+            <div class="gloss-row"><div class="gloss-term">ARD (Agentic Resource Discovery)</div><div class="gloss-def">A standard interface for querying and retrieving agentic resources across catalogs and registries.</div></div>
+            <div class="gloss-row"><div class="gloss-term">ANS</div><div class="gloss-def">An identity system that provides mechanisms for verifying ownership, provenance, and trust.</div></div>
             <div class="gloss-row"><div class="gloss-term">A2A Agent Card</div><div class="gloss-def">A description of an agent's endpoint, auth, and skills. Media type <code>application/a2a-agent-card+json</code>.</div></div>
             <div class="gloss-row"><div class="gloss-term">MCP</div><div class="gloss-def">Model Context Protocol. A server descriptor exposing tools and resources to agent runtimes.</div></div>
             <div class="gloss-row"><div class="gloss-term">Gateway</div><div class="gloss-def">An access-control and policy layer in front of agents, handling privacy, throttling, and compliance.</div></div>
-            <div class="gloss-row"><div class="gloss-term">Platform registry</div><div class="gloss-def">A hosting platform providing onboarding, hosting, billing, and developer experience.</div></div>
-            <div class="gloss-row"><div class="gloss-term">OASF / ACP</div><div class="gloss-def">AGNTCY common specifications: a shared object schema and an agent connect protocol.</div></div>
-          </div>
+            <div class="gloss-row"><div class="gloss-term">Platform registry</div><div class="gloss-def">A hosting platform providing onboarding, hosting, billing, and developer experience.</div></div>          </div>
         </section>
 
         <section id="infra">
@@ -78,12 +74,8 @@
             <div class="gloss-row"><div class="gloss-term">.well-known</div><div class="gloss-def">A standard URL prefix where a domain publishes machine-readable resources such as an AI Catalog.</div></div>
             <div class="gloss-row"><div class="gloss-term">Permissionless deployment</div><div class="gloss-def">Registering an identity and delegating runtime, agent card, and domain to independent providers, with no single controlling stack.</div></div>
             <div class="gloss-row"><div class="gloss-term">Agent card host</div><div class="gloss-def">A third-party host that serves an agent card on behalf of an identity, separate from the runtime and the domain. <code>host39.org</code> is one such host, letting SMBs and individuals publish agent-card information without owning a DNS domain or running their own catalog.</div></div>
-            <div class="gloss-row"><div class="gloss-term">Runtime</div><div class="gloss-def">The provider hosting the executing agent (AWS, Azure, GCP, Railway, Cloudflare, and others).</div></div>
-            <div class="gloss-row"><div class="gloss-term">DHT</div><div class="gloss-def">Distributed hash table. The decentralized routing substrate (IPFS Kademlia) used by ADS.</div></div>
-            <div class="gloss-row"><div class="gloss-term">OCI</div><div class="gloss-def">Open Container Initiative. A content-addressing format reused by ADS for immutable storage.</div></div>
-            <div class="gloss-row"><div class="gloss-term">Sigstore</div><div class="gloss-def">A signing and integrity-verification system used by ADS.</div></div>
-            <div class="gloss-row"><div class="gloss-term">SLIM</div><div class="gloss-def">AGNTCY agent gateway for low-latency multi-agent communication, supporting peer-to-peer and pub/sub modes.</div></div>
-            <div class="gloss-row"><div class="gloss-term">TTL</div><div class="gloss-def">Time to live. The cache lifetime of a record before it is refetched.</div></div>
+            <div class="gloss-row"><div class="gloss-term">Runtime</div><div class="gloss-def">The provider hosting the executing agent (AWS, Azure, GCP, or another provider).</div></div>
+            <div class="gloss-row"><div class="gloss-term">DHT</div><div class="gloss-def">Distributed hash table. The decentralized routing substrate used by ADS for distributed routing across nodes.</div></div>            <div class="gloss-row"><div class="gloss-term">TTL</div><div class="gloss-def">Time to live. The cache lifetime of a record before it is refetched.</div></div>
           </div>
         </section>
 

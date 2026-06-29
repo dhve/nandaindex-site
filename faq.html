@@ -46,19 +46,19 @@
           <div class="faq-group">
             <details class="faq" open>
               <summary>What is NandaIndex?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>A federated resolution layer. It is an AI Catalog-formatted database of index records, where each record maps a stable identity to the correct next discovery object. It introduces no new record format and does not host or execute agents.</p></div>
+              <div class="faq-a"><p>NandaIndex is a federated index of AI Catalog-formatted resolution records, a global switchboard for agent discovery. Each entry maps an identity to a discovery entry point. Rather than acting as a centralized registry, NandaIndex is a distributed index of pointers: authoritative discovery remains with each system, multiple resolution paths can coexist, and federation enables cross-boundary discovery.</p></div>
             </details>
             <details class="faq">
               <summary>Is NandaIndex a registry?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>No. A registry holds agent descriptions; NandaIndex holds pointers. An entry resolves an identity to wherever its description already lives, whether that is an AI Catalog, a DNS-AID record, a gateway, an AGNTCY ADS entry, or a hosted agent card.</p></div>
+              <div class="faq-a"><p>No. Rather than acting as a centralized registry, NandaIndex is a distributed index of pointers. Authoritative discovery remains with each system; an entry resolves an identity to the correct discovery entry point, whether that is an AI Catalog, a DNS-based system, a gateway, a registry, or an agent card.</p></div>
             </details>
             <details class="faq">
               <summary>Do I need NandaIndex if I already publish AI Catalog?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>Not for direct resolution. When you publish AI Catalog at a well-known endpoint and own the domain, any requester fetches it directly and NandaIndex is not in the critical path. An entry remains useful for fallback, federation visibility, migration, and anti-squatting.</p></div>
+              <div class="faq-a"><p>Not for direct resolution. When an enterprise publishes an AI Catalog at a well-known endpoint and controls the domain, direct resolution already works, and NandaIndex is not in the critical path. No extra infrastructure is needed; any requester can fetch the catalog directly. A NandaIndex entry is optional, useful as a fallback or federation entry point.</p></div>
             </details>
             <details class="faq">
               <summary>What is a discovery object?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>The target an identity resolves to: an AI Catalog record or <code>.well-known</code> URL, a DNS-AID record, an AGNTCY ADS entry, an ANS record, an enterprise gateway, an A2A Agent Card or MCP descriptor, a hosted card, or a sector registry.</p></div>
+              <div class="faq-a"><p>The discovery entry point an identity resolves to, whether that is an AI Catalog, a DNS-AID record, a gateway, a platform registry, or a hosted agent card.</p></div>
             </details>
           </div>
         </section>
@@ -68,19 +68,19 @@
           <div class="faq-group">
             <details class="faq">
               <summary>What does an entry contain?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>Four things: a stable <code>identifier</code> (URN or URI), the <code>mediaType</code> of the target, the target itself as a <code>url</code> or inline <code>data</code>, and <code>metadata</code> routing hints under <code>org.projectnanda.*</code>.</p></div>
+              <div class="faq-a"><p>Each resolution entry is an AI Catalog-compatible record that acts as a typed pointer, indicating the discovery mechanism (for example DNS-AID, catalog, or gateway), the location or access method, and the metadata required for interpretation and trust. In the index-record format this is an <code>identifier</code> and <code>displayName</code>, a <code>mediaType</code>, a <code>url</code> or inline <code>data</code>, a <code>description</code> and <code>tags</code>, the <code>publisher</code>, and <code>metadata</code>.</p></div>
             </details>
             <details class="faq">
               <summary>When does an entry use a URL versus inline data?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>A <code>url</code> is used when the target is fetchable directly, such as a hosted card or a well-known catalog. Inline <code>data</code> is used when resolution hands off to a system that owns the lookup itself, such as a DNS-AID <code>agentDiscoveryName</code>.</p></div>
+              <div class="faq-a"><p>AI Catalog provides a consistent representation for both direct resources, such as agent cards and MCP descriptors, and indirect discovery paths, such as catalogs, DNS, and registries. A <code>url</code> points to a directly fetchable target; inline <code>data</code> carries a discovery path such as a DNS-AID lookup (<code>organizationDiscoveryName</code> and <code>agentDiscoveryName</code>).</p></div>
             </details>
             <details class="faq">
               <summary>What is a resolution role?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>A metadata hint, <code>org.projectnanda.resolutionRole</code>, that describes how to treat the target. Examples include <code>nested-ai-catalog</code>, <code>dns-aid-pointer</code>, <code>personal-agent-card</code>, and <code>gateway</code>.</p></div>
+              <div class="faq-a"><p>In the index-record examples, the metadata field <code>org.projectnanda.resolutionRole</code> carries values such as <code>nested-ai-catalog</code>, <code>dns-aid-pointer</code>, <code>smb-agent-card</code>, <code>personal-agent-card</code>, and <code>ard-endpoint</code>.</p></div>
             </details>
             <details class="faq">
               <summary>How does resolution proceed?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>NandaIndex maps the identity to a discovery object and returns its routing hints. The requester reads the discovery object, then the agent card for endpoint and auth, then calls the runtime. NandaIndex routes the first hop and then steps aside.</p></div>
+              <div class="faq-a"><p>Resolution separates two concerns: resolution determines where and how discovery should begin, and discovery finds capabilities via mechanisms such as ARD. The flow is Identity → Resolution → Discovery → Invocation: a requester starts with an identity, queries a resolution system, receives AI Catalog-formatted resolution entries, follows the discovery path each specifies (ARD, DNS lookup, gateway), and then proceeds to verification and invocation.</p></div>
             </details>
           </div>
         </section>
@@ -90,15 +90,15 @@
           <div class="faq-group">
             <details class="faq">
               <summary>What identities are supported?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>Any stable URN or URI. Domain identities (<code>urn:ai:domain:...</code>), email identities (<code>urn:ai:email:...</code>), and system identities (<code>urn:ai:system:...</code>) are all entries of the same shape.</p></div>
+              <div class="faq-a"><p>An identity can be a domain, an email, or a URN. The paper's examples use domain identities (<code>urn:ai:domain:...</code>), email identities (<code>urn:ai:email:...</code>), and system identities (<code>urn:ai:system:...</code>), all carried in the same record format.</p></div>
             </details>
             <details class="faq">
               <summary>What is permissionless deployment?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>An identity does not require a unified infrastructure stack. The runtime, the agent card, and the brand domain can each live with a different provider. No single party controls all three, and no enterprise gateway or DNS certificate is required.</p></div>
+              <div class="faq-a"><p>The runtime, the agent card, and the domain can each live with a different provider. An SMB's agent may be hosted on AWS while its agent card is hosted by a third party such as host39.org; an individual who does not own a domain name can run a personal agent on AWS, Azure, GCP, or another provider while the agent card lives elsewhere. NandaIndex resolves the identity regardless.</p></div>
             </details>
             <details class="faq">
               <summary>Can an SMB or individual register without a domain?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>Yes. An individual can use an email identity. An SMB can own a domain but delegate card hosting and runtime to third parties. An entry only needs a stable identity and a target.</p></div>
+              <div class="faq-a"><p>Yes. SMBs typically rely on hosted infrastructure and may not operate catalogs, DNS discovery, or gateways; for them NandaIndex becomes the primary discovery entry point. Individuals typically lack domain ownership and discovery infrastructure and rely on identity-based resolution: an email identity maps directly to a hosted agent card.</p></div>
             </details>
             <details class="faq">
               <summary>What is host39.org?<span class="q-sign">+</span></summary>
@@ -112,19 +112,19 @@
           <div class="faq-group">
             <details class="faq">
               <summary>How does NandaIndex relate to AI Catalog?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>It uses the AI Catalog Catalog Entry as its index-record format and strengthens AI Catalog by making it the framework through which other discovery systems bridge.</p></div>
+              <div class="faq-a"><p>NandaIndex reuses AI Catalog as a unified record format for resolution. No new schema is introduced; AI Catalog becomes the bridge across heterogeneous systems. NandaIndex strengthens AI Catalog by making it the preferred framework through which other discovery systems can be bridged.</p></div>
             </details>
             <details class="faq">
               <summary>How does it relate to AGNTCY ADS and ARD?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>ADS is a decentralized backend directory; ARD is a read-only finder API over conforming registries. An entry can point at an ADS entry, and ADS exposes an AI Catalog-compatible interface, so the same record is reachable by catalog lookup, ARD search, or NandaIndex resolution.</p></div>
+              <div class="faq-a"><p>ADS and NandaIndex operate at different layers. ADS provides the federated discovery infrastructure, implementing AI Catalog as the representation format and ARD as the standard query interface; NandaIndex provides the resolution layer that directs traffic to systems like ADS. Together they form a complete path: Identity → NandaIndex → ADS (ARD) → AI Catalog → Agent.</p></div>
             </details>
             <details class="faq">
               <summary>Does it replace DNS or DNS-AID?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>No. For domain-controlled, cacheable resolution, DNS-AID stays authoritative. NandaIndex makes the DNS-AID path reachable from the switchboard by pointing to it with inline routing data.</p></div>
+              <div class="faq-a"><p>No. For a DNS-based discovery path, NandaIndex acts as a bridge, not a replacement, and discovery continues through DNS-AID. The entry carries inline routing data (<code>organizationDiscoveryName</code> and <code>agentDiscoveryName</code>) so the DNS-AID path is reachable from the switchboard, while the domain's DNS stays authoritative.</p></div>
             </details>
             <details class="faq">
               <summary>How do emerging registries (telecom, IoT, sovereign) join?<span class="q-sign">+</span></summary>
-              <div class="faq-a"><p>Each publishes one entry pointing to its native mechanism. It does not adopt AI Catalog internally and does not change its existing system. The switchboard absorbs the new system without requiring conformance.</p></div>
+              <div class="faq-a"><p>Each publishes a resolution entry that points to its native mechanism. A resolution entry may point to platform or vertical registries, among other targets. The resolution layer does not replace these systems, it connects them, allowing heterogeneous discovery mechanisms to coexist while remaining interoperable, without requiring convergence on a single approach.</p></div>
             </details>
           </div>
         </section>

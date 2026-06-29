@@ -27,16 +27,17 @@
     <!-- ============ TITLE ============ -->
     <header class="doc-hero">
       <p class="eyebrow">NandaIndex · Federated Resolution Architecture</p>
-      <h1>A global switchboard for agent discovery</h1>
-      <p class="subtitle">Mapping stable identities to the correct discovery object across enterprises, SMBs, and individuals.</p>
+      <h1>A Global Switchboard for the Agentic Web</h1>
+      <p class="subtitle">Connecting Discovery Islands Across Enterprises, SMBs, and Individuals</p>
       <p class="abstract">
-        Agent discovery is diverging into many discovery systems: AI Catalog, DNS-AID, ANS,
-        <code>.well-known</code> endpoints, A2A cards, MCP descriptors, gateways, platform registries,
-        and emerging telecom, IoT, and sovereign directories. NandaIndex is a federation layer over
-        them. It maps a stable identity to the correct next discovery object, using the AI Catalog
-        Catalog Entry itself as the index-record format. It bridges these systems rather than
-        consolidating them, and it stays out of the critical path wherever direct resolution already
-        works.
+        Agent discovery is diverging into multiple useful approaches, a natural consequence of
+        innovation across different communities, use cases, and deployment environments. AI Catalog is
+        an ideal starting point for public enterprise agent and AI-resource discovery, but it needs to
+        be strengthened by allowing other discovery mechanisms to connect through it: DNS-AID, ANS,
+        <code>.well-known</code>, A2A cards, MCP, gateways, and platform registries. NandaIndex is a
+        Federated Resolution Architecture, a global switchboard that uses the AI Catalog format itself as
+        the common index-record format, making it the preferred framework through which other discovery
+        systems can be bridged.
       </p>
     </header>
 
@@ -61,34 +62,35 @@
         <section id="intro">
           <h2>Introduction</h2>
           <p>
-            Innovation drives divergence. Different communities solve different problems: enterprises
-            manage compliance, developers build open tools, governments stand up sovereign registries,
-            telecom operators integrate agents into carrier networks. Each arrives at a different
-            discovery system. This is healthy ecosystem behaviour, not a coordination failure.
+            The agentic web is emerging rapidly. Enterprises are beginning to expose public AI agents,
+            tools, skills, gateways, MCP servers, and catalogs. At the same time, SMBs and individuals
+            will soon want discoverable agents without operating enterprise-grade infrastructure.
           </p>
           <p>
-            Left unconnected, these systems become discovery islands. A requester that speaks AI Catalog
-            cannot resolve an identity published only through DNS-AID, behind a gateway, or on a
-            third-party card host. The reachable set is bounded by the one mechanism a requester happens
-            to implement.
+            Innovation drives divergence. Different communities solving real problems, enterprises
+            managing compliance, developers building open tools, governments standing up sovereign
+            registries, telecom operators integrating agents into their networks, will naturally arrive
+            at different discovery systems. This is not a coordination failure. It is what healthy
+            ecosystems look like.
           </p>
+          <p>The answer is not to consolidate into one system. The answer is to build bridges.</p>
           <p>
-            AI Catalog is a strong starting point for public enterprise resource discovery. It is a
-            typed, nestable, machine-readable container for heterogeneous AI artifacts: A2A Agent Cards,
-            MCP server descriptors, nested catalogs, tools, skills, datasets, and gateways. It does not
-            cover every actor or every discovery system. SMBs and individuals need discoverability with
-            no enterprise infrastructure, and non-catalog systems need a way to be reached.
+            AI Catalog is a strong starting point. When an enterprise publishes an AI Catalog at a
+            well-known endpoint and controls the domain, direct resolution already works, and NandaIndex
+            is not in the critical path. But AI Catalog does not cover every actor or every discovery
+            system. Meanwhile, SMBs and individuals need paths to discoverability that require no
+            enterprise infrastructure at all.
           </p>
-          <p>The goal is not to consolidate everything into one system. The goal is to build bridges.</p>
         </section>
 
         <section id="what">
           <h2>What is NANDA Index</h2>
           <p>
-            NandaIndex is an AI Catalog-formatted database of index records. It introduces no new record
-            format. Each entry is an AI Catalog Catalog Entry that maps one identity to the correct next
-            discovery object. It strengthens AI Catalog by making it the framework through which other
-            discovery systems are bridged.
+            NandaIndex is a federated index of AI Catalog-formatted resolution records. It introduces no
+            new schema; each entry is an AI Catalog-compatible record that acts as a typed pointer,
+            mapping an identity to a discovery entry point. Rather than acting as a centralized registry,
+            NandaIndex is a distributed index of pointers: authoritative discovery remains with each
+            system, and federation enables cross-boundary discovery.
           </p>
           <div class="table-scroll">
             <table class="spec-table">
@@ -117,7 +119,7 @@
           <h3>Permissionless deployment</h3>
           <p>
             An identity does not require a unified infrastructure stack. The agent runtime can live on
-            one provider (AWS, Azure, GCP, Railway, Cloudflare), the agent card can be hosted by a
+            one provider (AWS, Azure, GCP, or another provider), the agent card can be hosted by a
             separate third-party card host (for example <code>host39.org</code>), and the brand domain
             can sit on yet another platform. No single party controls all three. No enterprise gateway or
             DNS certificate is required.
@@ -154,7 +156,7 @@
                 <tr><th>AGNTCY ADS</th><td>Decentralized DHT routing; OCI storage; verifiable integrity</td><td>Linking into catalog-based or index-based lookups</td></tr>
                 <tr><th>Gateways</th><td>Access control, privacy, throttling, compliance</td><td>Discovery of agents not behind that gateway</td></tr>
                 <tr><th>ANS / DIDs</th><td>Identity and ownership proof</td><td>Resource indexing, routing</td></tr>
-                <tr><th>ARD</th><td>Read-only standard finder API across conforming registries</td><td>Content management, signing, cross-registry federation</td></tr>
+                <tr><th>ARD</th><td>Standard interface for querying and retrieving agentic resources across catalogs and registries</td><td>Content management, signing, cross-registry federation</td></tr>
                 <tr><th>Platform registries</th><td>Onboarding, hosting, billing, developer experience</td><td>Cross-platform and cross-community discovery</td></tr>
                 <tr><th>Telecom / IoT / Sovereign</th><td>Sector governance, carrier integration, national compliance</td><td>Bridging into a global index</td></tr>
               </tbody>
@@ -175,8 +177,8 @@
   "displayName": "Moon Bakery Orders Agent",
   "mediaType": "application/a2a-agent-card+json",
   "url": "https://agentcards.host39.org/moonbakery.com/orders.json",
-  "description": "SMB hosted card. Owns moonbakery.com but runs no enterprise infrastructure. Runtime, agent card, and domain sit with three separate providers, a demonstration of permissionless deployment: no enterprise gateway, no DNS certificate.",
-  "tags": ["smb", "a2a-card", "orders"],
+  "description": "Ordering agent for Moon Bakery. Supports menu lookup, order placement, pickup scheduling, and order status.",
+  "tags": ["smb", "bakery", "orders", "commerce", "a2a-agent-card"],
   "publisher": {
     "identifier": "urn:ai:domain:moonbakery.com",
     "displayName": "Moon Bakery",
@@ -214,7 +216,7 @@
           <div class="linkrows">
             <a class="linkrow" href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">
               <span class="lr-kind">arXiv 2507.14263</span>
-              <span class="lr-main"><h3>Beyond DNS: Unlocking the Internet of AI Agents</h3><p>The NANDA Index and Verified AgentFacts architecture. Raskar et al., MIT.</p></span>
+              <span class="lr-main"><h3>Beyond DNS: Unlocking the Internet of AI Agents</h3><p>The NANDA Index architecture. Raskar et al., MIT.</p></span>
               <span class="lr-arrow">↗</span>
             </a>
             <a class="linkrow" href="https://arxiv.org/abs/2508.03101" target="_blank" rel="noopener">
@@ -239,7 +241,7 @@
             </a>
             <a class="linkrow" href="https://github.com/ards-project/docs" target="_blank" rel="noopener">
               <span class="lr-kind">ards-project</span>
-              <span class="lr-main"><h3>ARD (Agent Resource Discovery)</h3><p>The read-only standard finder API across conforming registries.</p></span>
+              <span class="lr-main"><h3>ARD (Agentic Resource Discovery)</h3><p>A standard interface for querying and retrieving agentic resources across catalogs and registries.</p></span>
               <span class="lr-arrow">↗</span>
             </a>
             <a class="linkrow" href="https://projectnanda.org" target="_blank" rel="noopener">
