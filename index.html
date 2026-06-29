@@ -329,7 +329,7 @@
       });
       function steps(r) {
         var role = (r.meta && r.meta['org.projectnanda.resolutionRole']) || (r.caps && r.caps[0]) || '';
-        var target = r.url ? r.url : (r.data ? JSON.stringify(r.data) : r.host);
+        var target = r.url ? r.url : (r.data ? (r.data.agentDiscoveryName || JSON.stringify(r.data)) : r.host);
         return [
           { t: 'NandaIndex', io: 'GET /resolve?identifier=' + r.identity },
           { t: 'Discovery object', io: r.mediaType + (role ? '  ·  ' + role : '') + '  @  ' + r.host },
@@ -356,7 +356,10 @@
       }
       sel.addEventListener('change', function () { render(DATA[+sel.value || 0]); play(); });
       btn.addEventListener('click', play);
-      render(DATA[0]);
+      var defaultIdx = 0;
+      for (var di = 0; di < DATA.length; di++) { if (DATA[di].key === 'skyblue-refunds') { defaultIdx = di; break; } }
+      sel.value = defaultIdx;
+      render(DATA[defaultIdx]);
     })();
   </script>
 </body>
