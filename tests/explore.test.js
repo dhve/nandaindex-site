@@ -2,9 +2,9 @@
 const assert = require('node:assert');
 const E = require('../explore.js');
 
-// dataset spans all six categories, >9 entries for pagination
+// dataset spans all six discovery-mechanism categories, >9 entries for pagination
 const cats = new Set(E.DATA.map((r) => r.cat));
-['enterprise', 'dns', 'smb', 'personal', 'mcp', 'skill'].forEach((c) =>
+['catalog', 'dns-aid', 'card', 'directory', 'gateway', 'emerging'].forEach((c) =>
   assert.ok(cats.has(c), `dataset missing category ${c}`));
 assert.ok(E.DATA.length > 9, 'need >9 records to exercise pagination');
 
@@ -13,22 +13,24 @@ E.DATA.forEach((r) => {
   ['key', 'name', 'cat', 'identity', 'mediaType', 'description', 'updated'].forEach((f) =>
     assert.ok(r[f] !== undefined, `record ${r.key} missing ${f}`));
   assert.ok(Array.isArray(r.tags) && Array.isArray(r.agents) && Array.isArray(r.caps));
+  assert.ok(r.agents.length >= 1, `record ${r.key} needs an agent for the trace`);
 });
 
-// category derivation
-assert.equal(E.categoryOf({ cat: 'mcp' }), 'mcp');
+// category derivation from media type
+assert.equal(E.categoryOf({ cat: 'dns-aid' }), 'dns-aid');
+assert.equal(E.categoryOf({ mediaType: 'application/ai-catalog+json' }), 'catalog');
 
 // search filter (case-insensitive, matches name/identity/domain/description)
-const acme = E.applyFilters(E.DATA, { search: 'acme', cats: new Set(), sort: 'recent' });
+const bakery = E.applyFilters(E.DATA, { search: 'moonbakery', cats: new Set(), sort: 'recent' });
 assert.ok(
-  acme.length >= 1 &&
-    acme.every((r) => /acme/i.test(r.name + r.identity + (r.domain || '') + r.description)),
-  'search should match acme',
+  bakery.length >= 1 &&
+    bakery.every((r) => /moonbakery/i.test(r.name + r.identity + (r.domain || '') + r.description)),
+  'search should match moonbakery',
 );
 
 // category filter
-const onlyMcp = E.applyFilters(E.DATA, { search: '', cats: new Set(['mcp']), sort: 'recent' });
-assert.ok(onlyMcp.length >= 1 && onlyMcp.every((r) => r.cat === 'mcp'), 'mcp filter');
+const onlyCard = E.applyFilters(E.DATA, { search: '', cats: new Set(['card']), sort: 'recent' });
+assert.ok(onlyCard.length >= 1 && onlyCard.every((r) => r.cat === 'card'), 'card filter');
 
 // sort: name A–Z
 const byName = E.sortRecords(E.DATA.slice(), 'name');
@@ -41,20 +43,17 @@ const firstUnverified = byVer.findIndex((r) => !r.verified);
 if (firstUnverified !== -1)
   assert.ok(byVer.slice(firstUnverified).every((r) => !r.verified), 'verified-first order');
 
-// exports
+// exports: AI Catalog entry shape: identifier first, then mediaType, then metadata
 const rec = E.DATA[0];
-const json = E.toJSON(rec);
-assert.equal(typeof json, 'string');
-assert.deepStrictEqual(Object.keys(JSON.parse(json))[0], 'identifier');
-assert.ok(E.toMarkdown(rec).includes(rec.name), 'markdown includes name');
-
+const parsed = JSON.parse(E.toJSON(rec));
+assert.deepStrictEqual(Object.keys(parsed).slice(0, 2), ['identifier', 'mediaType']);
+assert.equal(parsed.identifier, rec.identity, 'JSON identifier matches');
+assert.ok(parsed.url || parsed.data, 'entry points to a url or inline routing data');
+assert.equal(typeof parsed.metadata, 'object', 'entry carries metadata');
 console.log('ok - explore.js logic', E.DATA.length, 'records');
 
-// export shapes
-const md = E.toMarkdown(E.DATA[0]);
+// markdown export
+const md = E.toMarkdown(rec);
 assert.ok(md.startsWith('# '), 'markdown export should start with an H1 title');
-assert.ok(md.includes(E.DATA[0].identity), 'markdown must include the identifier');
-const parsed = JSON.parse(E.toJSON(E.DATA[0]));
-assert.equal(parsed.identifier, E.DATA[0].identity, 'JSON identifier matches');
-assert.equal(typeof parsed.email_verified, 'boolean', 'JSON carries email_verified');
+assert.ok(md.includes(rec.identity), 'markdown must include the identifier');
 console.log('ok - export shapes');

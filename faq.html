@@ -3,193 +3,180 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FAQ · NANDA Index</title>
-  <meta name="description" content="Frequently asked questions about the NANDA Index: AgentFacts, the quilt model, privacy, revocation, and how it relates to MCP, A2A and NLWeb." />
-  <link rel="stylesheet" href="styles.css" />
+  <title>FAQ · NandaIndex</title>
+  <meta name="description" content="NandaIndex FAQ: what it is, how index records and resolution work, supported identities, permissionless deployment, and how it relates to AI Catalog, AGNTCY, DNS-AID, and emerging registries." />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body>
 
-  <!-- ============ TOPBAR ============ -->
   <header class="topbar">
     <div class="brand">
-      <a href="index.html" class="brand-link"><strong>NANDA</strong> Index</a>
-      <span class="tag">Working draft v0.3 · Project NANDA</span>
+      <a href="index.html" class="brand-link"><strong>Nanda</strong>Index</a>
+      <span class="tag">Working draft</span>
     </div>
     <nav class="navlinks">
-      <a href="index.html#why">Why</a>
-      <a href="index.html#what">What</a>
-      <a href="index.html#how">How it works</a>
+      <a href="explore.html">Browse</a>
       <a href="faq.html" class="active">FAQ</a>
-      <a href="https://nandaindex.org" target="_blank" rel="noopener">Resolve →</a>
+      <a href="glossary.html">Glossary</a>
     </nav>
   </header>
 
-  <main>
+  <div class="doc-wrap">
+    <header class="doc-hero">
+      <p class="eyebrow">Reference</p>
+      <h1>Frequently asked questions</h1>
+      <p class="subtitle">What NandaIndex is, how records resolve, and how it bridges existing discovery systems.</p>
+    </header>
 
-    <!-- ============ FAQ HERO ============ -->
-    <section class="faq-hero">
-      <p class="eyebrow"><span class="mk">FAQ</span> Everything you wanted to ask</p>
-      <h1>Questions about the <span style="background:var(--brand-yellow);padding:0 8px;border-radius:4px;">NANDA Index</span>.</h1>
-      <p class="lede">The short version of the architecture, the trust model, and how it fits with the protocols you already use. For the full detail, read <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Beyond DNS</a>.</p>
-    </section>
+    <div class="doc-layout">
+      <aside class="docnav" aria-label="Contents">
+        <p class="docnav-title">Groups</p>
+        <ol>
+          <li><a href="#basics">Basics</a></li>
+          <li><a href="#entries">Entries and resolution</a></li>
+          <li><a href="#identities">Identities and deployment</a></li>
+          <li><a href="#ecosystem">Ecosystem</a></li>
+        </ol>
+      </aside>
 
-    <!-- THE BASICS -->
-    <div class="faq-group">
-      <p class="gh">The basics</p>
+      <article class="doc">
 
-      <details class="faq" open>
-        <summary>What is the NANDA Index? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>The NANDA Index is a lean, DNS-inspired index for the Internet of AI Agents. It maps an agent's identity to a tiny, cryptographically signed record called an <code>AgentAddr</code>, which in turn points to dynamic, verifiable <strong>AgentFacts</strong>.</p>
-          <p>Think of it as the layer that answers "who is this agent, where do I reach it, and can I trust what it claims?" without forcing the whole web to be rebuilt. NANDA stands for Networked AI Agents in a Decentralized Architecture.</p>
-        </div>
-      </details>
+        <section id="basics">
+          <h2>Basics</h2>
+          <div class="faq-group">
+            <details class="faq" open>
+              <summary>What is NandaIndex?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>A federated resolution layer. It is an AI Catalog-formatted database of index records, where each record maps a stable identity to the correct next discovery object. It introduces no new record format and does not host or execute agents.</p></div>
+            </details>
+            <details class="faq">
+              <summary>Is NandaIndex a registry?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>No. A registry holds agent descriptions; NandaIndex holds pointers. An entry resolves an identity to wherever its description already lives, whether that is an AI Catalog, a DNS-AID record, a gateway, an AGNTCY ADS entry, or a hosted agent card.</p></div>
+            </details>
+            <details class="faq">
+              <summary>Do I need NandaIndex if I already publish AI Catalog?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>Not for direct resolution. When you publish AI Catalog at a well-known endpoint and own the domain, any requester fetches it directly and NandaIndex is not in the critical path. An entry remains useful for fallback, federation visibility, migration, and anti-squatting.</p></div>
+            </details>
+            <details class="faq">
+              <summary>What is a discovery object?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>The target an identity resolves to: an AI Catalog record or <code>.well-known</code> URL, a DNS-AID record, an AGNTCY ADS entry, an ANS record, an enterprise gateway, an A2A Agent Card or MCP descriptor, a hosted card, or a sector registry.</p></div>
+            </details>
+          </div>
+        </section>
 
-      <details class="faq">
-        <summary>Why can't DNS just handle AI agents? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>DNS, BGP and WHOIS were designed for millions of mostly static records that change on a minute-to-hour cycle. Autonomous agents are different: they may spawn, migrate and rotate endpoints every few seconds, and there can be billions of them.</p>
-          <p>DNS also only proves <strong>domain ownership</strong>. A TLS certificate says nothing about an agent's code, behaviour or whether its claimed capabilities are real. NANDA adds signed capability proofs, sub-second revocation, privacy-preserving lookups and an append-only audit trail that DNS was never meant to provide.</p>
-        </div>
-      </details>
+        <section id="entries">
+          <h2>Entries and resolution</h2>
+          <div class="faq-group">
+            <details class="faq">
+              <summary>What does an entry contain?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>Four things: a stable <code>identifier</code> (URN or URI), the <code>mediaType</code> of the target, the target itself as a <code>url</code> or inline <code>data</code>, and <code>metadata</code> routing hints under <code>org.projectnanda.*</code>.</p></div>
+            </details>
+            <details class="faq">
+              <summary>When does an entry use a URL versus inline data?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>A <code>url</code> is used when the target is fetchable directly, such as a hosted card or a well-known catalog. Inline <code>data</code> is used when resolution hands off to a system that owns the lookup itself, such as a DNS-AID <code>agentDiscoveryName</code>.</p></div>
+            </details>
+            <details class="faq">
+              <summary>What is a resolution role?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>A metadata hint, <code>org.projectnanda.resolutionRole</code>, that describes how to treat the target. Examples include <code>nested-ai-catalog</code>, <code>dns-aid-pointer</code>, <code>personal-agent-card</code>, and <code>gateway</code>.</p></div>
+            </details>
+            <details class="faq">
+              <summary>How does resolution proceed?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>NandaIndex maps the identity to a discovery object and returns its routing hints. The requester reads the discovery object, then the agent card for endpoint and auth, then calls the runtime. NandaIndex routes the first hop and then steps aside.</p></div>
+            </details>
+          </div>
+        </section>
 
-      <details class="faq">
-        <summary>Is NANDA trying to replace DNS or the web? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>No. NANDA is deliberately additive. It introduces exactly one constraint-shifting primitive (a lean, signed record that resolves to verifiable facts) and leaves the layers that already scale, such as HTTPS, CDNs and existing registries, untouched.</p>
-          <p>The goal is a flexible substrate for agent discovery, routing and capability negotiation that sits alongside today's infrastructure rather than tearing it down.</p>
-        </div>
-      </details>
+        <section id="identities">
+          <h2>Identities and deployment</h2>
+          <div class="faq-group">
+            <details class="faq">
+              <summary>What identities are supported?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>Any stable URN or URI. Domain identities (<code>urn:ai:domain:...</code>), email identities (<code>urn:ai:email:...</code>), and system identities (<code>urn:ai:system:...</code>) are all entries of the same shape.</p></div>
+            </details>
+            <details class="faq">
+              <summary>What is permissionless deployment?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>An identity does not require a unified infrastructure stack. The runtime, the agent card, and the brand domain can each live with a different provider. No single party controls all three, and no enterprise gateway or DNS certificate is required.</p></div>
+            </details>
+            <details class="faq">
+              <summary>Can an SMB or individual register without a domain?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>Yes. An individual can use an email identity. An SMB can own a domain but delegate card hosting and runtime to third parties. An entry only needs a stable identity and a target.</p></div>
+            </details>
+            <details class="faq">
+              <summary>What is host39.org?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>A third-party agent-card host. It lets SMBs and individuals publish agent-card information even when they do not own a DNS domain or cannot run catalog infrastructure on their own domain. The runtime and brand domain can live with other providers; host39.org serves the card, and a NandaIndex entry points to it.</p></div>
+            </details>
+          </div>
+        </section>
+
+        <section id="ecosystem">
+          <h2>Ecosystem</h2>
+          <div class="faq-group">
+            <details class="faq">
+              <summary>How does NandaIndex relate to AI Catalog?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>It uses the AI Catalog Catalog Entry as its index-record format and strengthens AI Catalog by making it the framework through which other discovery systems bridge.</p></div>
+            </details>
+            <details class="faq">
+              <summary>How does it relate to AGNTCY ADS and ARD?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>ADS is a decentralized backend directory; ARD is a read-only finder API over conforming registries. An entry can point at an ADS entry, and ADS exposes an AI Catalog-compatible interface, so the same record is reachable by catalog lookup, ARD search, or NandaIndex resolution.</p></div>
+            </details>
+            <details class="faq">
+              <summary>Does it replace DNS or DNS-AID?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>No. For domain-controlled, cacheable resolution, DNS-AID stays authoritative. NandaIndex makes the DNS-AID path reachable from the switchboard by pointing to it with inline routing data.</p></div>
+            </details>
+            <details class="faq">
+              <summary>How do emerging registries (telecom, IoT, sovereign) join?<span class="q-sign">+</span></summary>
+              <div class="faq-a"><p>Each publishes one entry pointing to its native mechanism. It does not adopt AI Catalog internally and does not change its existing system. The switchboard absorbs the new system without requiring conformance.</p></div>
+            </details>
+          </div>
+        </section>
+
+      </article>
     </div>
+  </div>
 
-    <!-- ARCHITECTURE -->
-    <div class="faq-group">
-      <p class="gh">Architecture</p>
-
-      <details class="faq">
-        <summary>What are AgentFacts? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p><strong>AgentFacts</strong> are self-describing <code>JSON-LD</code> documents, each signed as a W3C Verifiable Credential. They carry the things that actually change: endpoint lists, capability descriptors, telemetry configuration and authentication methods.</p>
-          <p>Because facts live outside the index, an agent can update its capabilities and endpoints continuously without ever writing to the index. The index only stores a pointer (<code>facts_url</code>) and a signature.</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>What are the three layers of the architecture? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p><strong>1. Lean Index (anchor).</strong> A decentralized mapping from agent IDs to an <code>AgentAddr</code> of roughly 120 bytes, holding a DID, TTL, pointers and an Ed25519 signature.</p>
-          <p><strong>2. AgentFacts (metadata).</strong> Signed JSON-LD documents the agent updates independently, split across a primary URL and a privacy-preserving private URL.</p>
-          <p><strong>3. Dynamic Resolution (routing).</strong> Latency, privacy and resilience-aware endpoint selection using static endpoints (TTL 1 to 6 hours), an adaptive resolver for geo load-balancing and DDoS mitigation, and rotating endpoints (TTL 5 to 15 minutes).</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>What does the AgentAddr record actually contain? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>A minimal set of static fields: a decentralized identifier (<code>id</code>), a <code>ttl</code>, a <code>facts_url</code>, an optional <code>private_facts_url</code>, an <code>adaptive_resolver_url</code> and a <code>signature</code>. That is roughly all it takes to stay under 120 bytes per record.</p>
-          <p>Keeping the record this small is what lets the index avoid the write overhead that would otherwise make billion-agent scale impossible. Everything dynamic is delegated to AgentFacts.</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>What is the "quilt" model? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>The index is envisioned as a quilt stitched across many kinds of registries: NANDA-native agents, enterprise agent stores, government registries, Web3 marketplaces, IoT devices, MCP servers and NLWeb agents.</p>
-          <p>Some agents are registered directly and are fully visible. Others are administered by an external registry and are visible only to varying degrees, for example <code>@company:shop</code> versus a routed <code>@company</code>. NANDA does not need to govern every agent; it simply holds a verifiable pointer to the right discovery object.</p>
-        </div>
-      </details>
+  <footer class="site-footer">
+    <div class="foot-cols">
+      <div class="foot-col">
+        <p class="foot-h">NandaIndex</p>
+        <a href="index.html#intro">Introduction</a>
+        <a href="index.html#what">What is NANDA Index</a>
+        <a href="index.html#resolve">Try Resolve</a>
+        <a href="explore.html">Browse index records</a>
+      </div>
+      <div class="foot-col">
+        <p class="foot-h">Reference</p>
+        <a href="faq.html">FAQ</a>
+        <a href="glossary.html">Glossary</a>
+      </div>
+      <div class="foot-col">
+        <p class="foot-h">Background</p>
+        <a href="https://outshift.cisco.com/blog/ai-ml/outshift-mit-agentic-web" target="_blank" rel="noopener">Switchboard (Cisco x MIT)</a>
+        <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Beyond DNS</a>
+        <a href="https://projectnanda.org" target="_blank" rel="noopener">Project NANDA</a>
+      </div>
     </div>
-
-    <!-- TRUST & PRIVACY -->
-    <div class="faq-group">
-      <p class="gh">Trust &amp; privacy</p>
-
-      <details class="faq">
-        <summary>What does "verify on claim, authenticate on update, attest on read" mean? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>It is the trust lifecycle of an entry. <strong>Verify on claim:</strong> when an entity claims an agent identity, ownership is verified. <strong>Authenticate on update:</strong> every change to the record or its facts must be cryptographically authenticated. <strong>Attest on read:</strong> when someone resolves the agent, they receive signed attestations they can independently check.</p>
-          <p>The effect is that trust is established once and re-checked continuously, rather than assumed because a lookup succeeded.</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>How does NANDA preserve privacy? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>Standard lookups leak who is asking for what, which enables passive tracking. NANDA uses <strong>dual-path resolution</strong>: a public <code>PrimaryFactsURL</code> and a <code>PrivateFactsURL</code> that can be hosted on third-party or decentralized storage (IPFS, Tor-style relays, a CDN or an enterprise bucket).</p>
-          <p>This supports least-disclosure, unlinkable queries and split-horizon governance, where different requesters can be given different answers, with tamper-evident audit logs. The trade-off is a small added latency, on the order of tens of milliseconds.</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>How fast is revocation and key rotation? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>Sub-second. Credentials reference a <strong>VC status list</strong> that can mark an agent's credentials revoked in under a second, and short-lived verifiable credentials (often under five minutes) limit the blast radius of any compromise.</p>
-          <p>This is a deliberate contrast with certificate ecosystems where revocation can take hours to propagate.</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>What stops an agent from lying about its capabilities? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>Capabilities are not self-asserted prose. They are schema-validated claims signed as W3C Verifiable Credentials, with issuers such as enterprises, consortia or federated certification authorities that can cross-sign each other within trust zones.</p>
-          <p>Each claim is anchored to an issuer ID with a revocation status, which directly targets capability spoofing, impersonation and supply-chain poisoning.</p>
-        </div>
-      </details>
+    <div class="foot-base">
+      <span>NandaIndex Federated Resolution Architecture. For research and discussion. Working draft.</span>
+      <a href="#" class="foot-top">Back to top ↑</a>
     </div>
-
-    <!-- ECOSYSTEM -->
-    <div class="faq-group">
-      <p class="gh">Ecosystem &amp; usage</p>
-
-      <details class="faq">
-        <summary>How does NANDA relate to MCP, A2A and NLWeb? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>They solve different problems. MCP (Model Context Protocol), A2A (Agent-to-Agent) and NLWeb describe how agents and tools <strong>communicate</strong>. NANDA is the layer underneath that handles <strong>discovery, identity and trust</strong> across all of them.</p>
-          <p>An MCP server, an A2A agent and an NLWeb agent can each appear as a patch in the NANDA quilt, which is what makes cross-protocol interoperability possible rather than leaving each ecosystem isolated.</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>Is the index centralized? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>No. The index is a decentralized, federated mapping, and AgentFacts are hosted by the agents and registries themselves on self-selected storage. Records are signed and cacheable, so resolution does not depend on a single authority being online.</p>
-          <p>Decentralized publishing is what lets the system absorb very high update rates without an index write bottleneck.</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>How do I register or resolve an agent? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>You can browse the live directory and resolve any agent identity to its discovery object at <a href="https://nandaindex.org" target="_blank" rel="noopener">nandaindex.org</a>. Registration is available to organizations and registries that want their agents indexed.</p>
-          <p>Under the hood, resolving an identity returns the AgentAddr, which you follow to the AgentFacts and then to a live endpoint via the dynamic resolution layer.</p>
-        </div>
-      </details>
-
-      <details class="faq">
-        <summary>Who is building NANDA, and what is its status? <span class="sign">+</span></summary>
-        <div class="faq-body">
-          <p>NANDA is a research initiative led from MIT (Project NANDA), with collaborators across industry and academia including contributors from Cisco, CMU, TCS and others. It grew out of the MIT and Cisco Outshift collaboration on the agentic web.</p>
-          <p>The architecture is published as a working draft (v0.3, request for comments), so specifics are expected to evolve. Start with <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Beyond DNS</a> and the <a href="https://arxiv.org/abs/2508.03101" target="_blank" rel="noopener">enterprise perspective</a> paper.</p>
-        </div>
-      </details>
-    </div>
-
-    <div class="hero-cta" style="margin-top:8px;">
-      <a class="btn primary" href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Read Beyond DNS <span class="arr">→</span></a>
-      <a class="btn" href="index.html">Back to overview</a>
-    </div>
-
-  </main>
-
-  <!-- ============ FOOTER ============ -->
-  <footer class="bottom">
-    <span>Project NANDA · MIT Media Lab. For research and discussion. v0.3, request for comments.</span>
-    <span class="fl">
-      <a href="index.html">Overview</a>
-      <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Beyond DNS</a>
-      <a href="https://projectnanda.org" target="_blank" rel="noopener">projectnanda.org</a>
-    </span>
   </footer>
 
+  <script>
+    (function () {
+      var links = Array.prototype.slice.call(document.querySelectorAll('.docnav a'));
+      var map = {};
+      links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+      var secs = Array.prototype.slice.call(document.querySelectorAll('.doc section'));
+      if (!('IntersectionObserver' in window) || !secs.length) return;
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          links.forEach(function (a) { a.classList.remove('current'); });
+          var cur = map[e.target.id];
+          if (cur) cur.classList.add('current');
+        });
+      }, { rootMargin: '-20% 0px -70% 0px' });
+      secs.forEach(function (s) { io.observe(s); });
+    })();
+  </script>
 </body>
 </html>

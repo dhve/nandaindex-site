@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A Global Switchboard for the Agentic Web · NandaIndex</title>
+  <meta name="description" content="A Global Switchboard for the Agentic Web: connecting discovery islands across enterprises, SMBs, and individuals through a NandaIndex Federated Resolution Architecture." />
+  <link rel="stylesheet" href="styles.css?v=4" />
+</head>
+<body>
+
+  <!-- ============ TOPBAR ============ -->
+  <header class="topbar">
+    <div class="brand">
+      <a href="index.html" class="brand-link"><strong>Nanda</strong>Index</a>
+      <span class="tag">Working draft</span>
+    </div>
+    <nav class="navlinks">
+      <a href="explore.html">Browse</a>
+      <a href="faq.html">FAQ</a>
+      <a href="glossary.html">Glossary</a>
+    </nav>
+  </header>
+
+  <div class="doc-wrap">
+
+    <!-- ============ TITLE + ABSTRACT ============ -->
+    <header class="doc-hero">
+      <p class="eyebrow">NandaIndex Federated Resolution Architecture</p>
+      <h1>A Global Switchboard for the Agentic Web</h1>
+      <p class="subtitle">Connecting Discovery Islands Across Enterprises, SMBs, and Individuals</p>
+      <p class="abstract">
+        <span class="al">Abstract.</span> Agent discovery is diverging into multiple useful approaches,
+        a natural consequence of innovation across different communities, use cases, and deployment
+        environments. AI Catalog is an ideal starting point for public enterprise agent and AI-resource
+        discovery. It provides a typed, nestable, machine-readable container for heterogeneous AI
+        artifacts: A2A Agent Cards, MCP server descriptors, nested catalogs, tools, skills, datasets,
+        gateways, and other AI resources. However, AI Catalog needs to be strengthened by allowing other
+        discovery mechanisms to connect through it. These include DNS-AID, ANS, .well-known, A2A cards,
+        MCP, gateways, and platform registries. This paper argues for a NandaIndex Federated Resolution
+        Architecture: a global switchboard that uses the AI Catalog format itself as the common
+        index-record format. NandaIndex strengthens AI Catalog by making it the preferred framework
+        through which other discovery systems can be bridged.
+      </p>
+    </header>
+
+    <div class="doc-layout">
+
+      <!-- ============ SECTION INDEX ============ -->
+      <aside class="docnav" aria-label="Contents">
+        <p class="docnav-title">Contents</p>
+        <ol>
+          <li><a href="#sec-1">1 · Introduction</a></li>
+          <li><a href="#sec-2">2 · Innovation Leads to Divergence</a></li>
+          <li><a href="#sec-3">3 · Permissionless Deployment</a></li>
+          <li><a href="#sec-4">4 · The Global Switchboard</a></li>
+          <li><a href="#sec-5">5 · NandaIndex</a></li>
+          <li><a href="#sec-6">6 · Examples</a></li>
+          <li><a href="#sec-7">7 · Case Study: AGNTCY</a></li>
+          <li><a href="#sec-8">8 · Conclusion</a></li>
+          <li><a href="#refs">References</a></li>
+        </ol>
+      </aside>
+
+      <!-- ============ DOCUMENT BODY ============ -->
+      <article class="doc">
+
+        <section id="sec-1">
+          <h2><span class="secno">1</span>Introduction</h2>
+          <p>
+            The agentic web is emerging rapidly. Enterprises are beginning to expose public AI agents,
+            tools, skills, gateways, MCP servers, and catalogs. At the same time, SMBs and individuals
+            will soon want discoverable agents without operating enterprise-grade infrastructure.
+          </p>
+          <p>
+            Innovation drives divergence. Different communities solving real problems (enterprises
+            managing compliance, developers building open tools, governments standing up sovereign
+            registries, telecom operators integrating agents into their networks) will naturally arrive
+            at different discovery systems. This is not a coordination failure. It is what healthy
+            ecosystems look like.
+          </p>
+          <p>The answer is not to consolidate into one system. The answer is to build bridges.</p>
+          <p>
+            AI Catalog is a strong starting point. When an enterprise publishes an AI Catalog at a
+            well-known endpoint and controls the domain, direct resolution already works, and NandaIndex
+            is not in the critical path. No extra infrastructure is needed. Any requester can fetch the
+            catalog directly. This is the simple, clean case and it should be celebrated. But AI Catalog
+            does not cover every actor or every discovery system. Innovation will continue to push new
+            registries, new formats, and new contexts into the picture:
+          </p>
+          <ul>
+            <li>Sovereign national directories will be required by some governments</li>
+            <li>Telecom registries will integrate agents into carrier infrastructure</li>
+            <li>IoT and EdgeAI systems will develop their own lightweight discovery mechanisms</li>
+            <li>Vertical registries in health, finance, aviation, and education will emerge with sector-specific governance</li>
+          </ul>
+          <p>
+            Meanwhile, SMBs and individuals need paths to discoverability that require no enterprise
+            infrastructure at all. NandaIndex is proposed as a global switchboard: an AI Catalog-formatted
+            federation layer that bridges these discovery islands by mapping stable identities to the
+            correct discovery object, whether that is an AI Catalog, a DNS-AID record, a gateway, a
+            platform registry, or a hosted agent card.
+          </p>
+          <p>
+            The global switchboard proposed by NANDA and AGNTCY, developed jointly by Outshift (Cisco)
+            and MIT Media Lab, provides the early working implementation of this vision. This paper builds
+            on that foundation by incorporating AI Catalog improvements and extending the model to the
+            full range of enterprise, SMB, and individual use cases.
+          </p>
+        </section>
+
+        <section id="sec-2">
+          <h2><span class="secno">2</span>Innovation Leads to Divergence, Bridges Make It Work</h2>
+          <h3>2.1 Why Divergence Is Healthy</h3>
+          <p>
+            When AI Catalog emerged from collaboration between the A2A and MCP communities, it showed what
+            good interoperability looks like: rather than creating yet another isolated registry, two
+            communities built a shared index format that preserves what each community had already built.
+            The result is a typed, nestable container that delegates the specification of each artifact
+            type to the relevant protocol owner. The interoperability surface is minimal; the delegation
+            is maximal.
+          </p>
+          <p>
+            That same principle applies at a larger scale. AGNTCY, the open-source collective building the
+            Internet of Agents (spearheaded by Cisco/Outshift, LangChain, and Galileo), takes a similar
+            approach: define common specifications (OASF, ACP) while letting each component deliver
+            standalone value and integrate through common APIs. The AGNTCY Agent Directory Service (ADS)
+            uses DHT-based routing, OCI-aligned content addressing, and Sigstore-backed integrity, a
+            purpose-built system optimized for decentralized agent discovery that complements, rather than
+            replaces, catalog-based approaches.
+          </p>
+          <p>Innovation continues to diverge in exactly this way. We should not fight it. We should support it with bridges and switchboards.</p>
+
+          <h3>2.2 Where Each System Fits, and Where Bridges Are Needed</h3>
+          <div class="table-scroll">
+            <table class="spec-table">
+              <thead>
+                <tr><th>Discovery mechanism</th><th>Best suited for</th><th>Where a bridge adds value</th></tr>
+              </thead>
+              <tbody>
+                <tr><th>AI Catalog</th><td>Rich enterprise resource indexing; typed, nestable, multi-artifact</td><td>Entities without domain names; cross-system linking</td></tr>
+                <tr><th>DNS-AID</th><td>Domain-controlled, fast, cacheable enterprise resolution</td><td>SMBs, individuals, non-DNS systems</td></tr>
+                <tr><th>AGNTCY ADS</th><td>Decentralized DHT routing; OCI storage; verifiable integrity</td><td>Linking into catalog-based or index-based lookups</td></tr>
+                <tr><th>Gateways</th><td>Access control, privacy, throttling, compliance</td><td>Discovery of agents not behind that gateway</td></tr>
+                <tr><th>ANS / DIDs</th><td>Identity and ownership proof</td><td>Resource indexing, routing</td></tr>
+                <tr><th>ARD</th><td>Read-only standard finder API across conforming registries</td><td>Content management, signing, cross-registry federation</td></tr>
+                <tr><th>Platform Registries</th><td>Onboarding, hosting, billing, developer experience</td><td>Cross-platform and cross-community discovery</td></tr>
+                <tr><th>Telecom / IoT / Sovereign</th><td>Sector-specific governance, carrier integration, national compliance</td><td>Bridging into global index</td></tr>
+                <tr><th>NandaIndex</th><td>Identity-to-discovery-object resolution for all entity types</td><td>Not applicable; this is the switchboard layer itself</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>2.3 One Point Deserves Emphasis</h3>
+          <p>
+            For enterprises that publish AI Catalog at a well-known endpoint and own the domain, direct
+            resolution already works. NandaIndex is not in the critical path. This is by design. NandaIndex
+            adds value at the edges: for actors who cannot publish a well-known catalog, for discovery
+            systems that are not AI Catalog-compatible, and for bridging across the growing number of
+            registries that innovation will continue to produce.
+          </p>
+          <p class="placeholder">
+            [Diagram to be inserted: showing where AI Catalog-native enterprise resolution handles
+            end-to-end discovery, versus where NandaIndex is needed as a bridge for DNS-AID paths, SMBs,
+            individuals, and emerging sovereign/telecom/IoT registries]
+          </p>
+        </section>
+
+        <section id="sec-3">
+          <h2><span class="secno">3</span>Permissionless Deployment: Runtime, Card, and Domain Can Be Separate</h2>
+          <p>
+            One of NandaIndex's most important properties is that it supports permissionless deployment,
+            meaning any entity can register a stable identity and point to its discovery object without
+            needing to control a single unified infrastructure stack. Specifically, NandaIndex makes it
+            possible for:
+          </p>
+          <ul>
+            <li>The agent runtime to live on one provider (AWS, Azure, GCP, Railway, Cloudflare)</li>
+            <li>The agent card to be hosted by a separate third-party card host (for example, host39.org)</li>
+            <li>The website or brand domain to sit on yet another platform</li>
+          </ul>
+          <p>
+            No single party needs to control all three. No enterprise gateway or DNS certificate is
+            required. A bakery, a freelancer, a civic group, or an individual user can register a stable
+            identity and delegate card hosting and runtime to whatever providers they choose.
+          </p>
+          <p>
+            This model naturally extends to emerging systems. As sovereign directories, telecom
+            registries, and IoT discovery systems innovate and mature, they can each publish a NandaIndex
+            entry that points into their native system, without needing to conform to AI Catalog
+            internally. The switchboard does not prescribe how any target system works. It only needs to
+            know how to reach it.
+          </p>
+        </section>
+
+        <section id="sec-4">
+          <h2><span class="secno">4</span>The Global Switchboard: Starting Point</h2>
+          <p>
+            The global switchboard proposed by NANDA and AGNTCY, described in the joint Cisco Outshift and
+            MIT publication <em>Building a Switchboard for the Internet of Agents</em>, is the practical
+            foundation for what this paper proposes. That collaboration established:
+          </p>
+          <ul>
+            <li><strong>Phase 1:</strong> NANDA Index at MIT as a neutral, consortium-governed switchboard for cross-organizational agent coordination</li>
+            <li><strong>Phase 2:</strong> Semantic discovery and federation through AGNTCY's Agent Directory, enabling interoperability with heterogeneous registry types via DHT-based routing and OCI-aligned content addressing</li>
+          </ul>
+          <p>
+            AGNTCY's discovery architecture already demonstrates multi-layer interoperability: the Agent
+            Directory Service provides the backend, ARD provides the standard read-only finder API on top
+            of it, and AI Catalog provides the index format through which external systems can query
+            entries. AGNTCY also already interoperates with AI Catalog and DNS-AID, making it an active
+            participant in exactly the kind of bridging this paper argues for.
+          </p>
+          <p>
+            This paper is the next step. It considers AI Catalog improvements, formalizes the NandaIndex
+            Federated Resolution Architecture, and extends the switchboard model explicitly to cover SMBs
+            and individuals, use cases the original collaboration between NANDA and AGNTCY framed but did
+            not yet fully specify.
+          </p>
+        </section>
+
+        <section id="sec-5">
+          <h2><span class="secno">5</span>NandaIndex: A Global Switchboard</h2>
+          <h3>5.1 Design</h3>
+          <p>
+            <strong>Core design choice:</strong> NandaIndex is an AI Catalog-formatted database of index
+            records. It does not introduce a new record format. Each entry is an AI Catalog Catalog Entry
+            pointing to the correct next discovery object for a given identity.
+          </p>
+          <div class="table-scroll">
+            <table class="spec-table">
+              <thead><tr><th>NandaIndex concept</th><th>Implementation</th></tr></thead>
+              <tbody>
+                <tr><th>Entry</th><td>AI Catalog Catalog Entry</td></tr>
+                <tr><th>Identity</th><td>URN / URI identifier</td></tr>
+                <tr><th>Target</th><td>URL or inline routing data</td></tr>
+                <tr><th>Routing hints</th><td>Metadata fields</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            For enterprises already on AI Catalog with a well-known endpoint: NandaIndex is optional.
+            Direct resolution already works. A NandaIndex entry remains useful for fallback, federation
+            visibility, migration, and anti-squatting, but it is not required in the critical path. A
+            NandaIndex entry can point to any of the following:
+          </p>
+          <ul>
+            <li>AI Catalog record or <code>.well-known</code> URL</li>
+            <li>DNS-AID record</li>
+            <li>AGNTCY Agent Directory entry</li>
+            <li>ANS record</li>
+            <li>Enterprise gateway</li>
+            <li>A2A Agent Card or MCP descriptor</li>
+            <li>Hosted SMB or personal agent card</li>
+            <li>Telecom, IoT, EdgeAI, or sovereign national registry</li>
+          </ul>
+          <h3>5.2 How Innovation Flows Through the Switchboard</h3>
+          <p>
+            As new discovery systems emerge (telecom registries, IoT catalogs, national directories,
+            sector-specific systems), they each need only one thing to become globally reachable: a
+            NandaIndex entry pointing to their native discovery mechanism. They do not need to adopt AI
+            Catalog internally. They do not need to modify their existing systems. The switchboard absorbs
+            innovation without requiring conformance.
+          </p>
+          <p>
+            This is the global switchboard model extended: just as AGNTCY's ADS and MIT's NANDA Index
+            interoperate through a shared global switchboard without either replacing the other, any future
+            registry can join the same fabric through a single entry.
+          </p>
+        </section>
+
+        <section id="sec-6">
+          <h2><span class="secno">6</span>Examples</h2>
+
+          <div class="example">
+            <h3>6.1 Enterprise: Pure AI Catalog (example.com)</h3>
+            <p>
+              This is the simple case. Direct resolution works. NandaIndex is not required. An enterprise
+              publishes at <code>https://example.com/.well-known/ai-catalog.json</code>. Any requester can
+              fetch it directly. A NandaIndex entry is optional, useful for federation, fallback, and
+              anti-squatting.
+            </p>
+            <pre class="codeblock">{
+  "identifier": "urn:ai:domain:example.com",
+  "mediaType": "application/ai-catalog+json",
+  "url": "https://example.com/.well-known/ai-catalog.json",
+  "metadata": {
+    "org.projectnanda.resolutionRole": "nested-ai-catalog",
+    "org.projectnanda.nandaIndexRole": "optional-fallback-entry"
+  }
+}</pre>
+            <p class="resolution"><span class="rl">Resolution</span><br />Requester fetches AI Catalog directly → selects agent, tool, MCP server, or gateway → follows artifact URL.</p>
+          </div>
+
+          <div class="example">
+            <h3>6.2 Enterprise: DNS-AID (skyblue.com)</h3>
+            <p>
+              SkyBlue uses DNS-AID at <code>refunds._agents.skyblue.com</code>. NandaIndex does not replace
+              DNS-AID, it makes the DNS-AID path reachable from the global switchboard, following the same
+              model as the NANDA and AGNTCY collaboration.
+            </p>
+            <pre class="codeblock">{
+  "identifier": "urn:ai:domain:skyblue.com:agent:refunds",
+  "mediaType": "application/vnd.dns-aid+json",
+  "data": {
+    "method": "dns-aid",
+    "agentDiscoveryName": "refunds._agents.skyblue.com"
+  },
+  "metadata": {
+    "org.projectnanda.resolutionRole": "dns-aid-pointer",
+    "org.projectnanda.authoritativeSystem": "skyblue.com DNS"
+  }
+}</pre>
+            <p class="resolution"><span class="rl">Resolution</span><br />NandaIndex → DNS-AID lookup → SkyBlue gateway or Agent Card → auth → agent.</p>
+          </div>
+
+          <div class="example">
+            <h3>6.3 SMB: Moon Bakery</h3>
+            <p>
+              Moon Bakery owns moonbakery.com but runs no enterprise infrastructure. Its runtime, agent
+              card, and domain are with three separate providers, a practical example of permissionless
+              deployment.
+            </p>
+            <pre class="codeblock">{
+  "identifier": "urn:ai:domain:moonbakery.com:agent:orders",
+  "mediaType": "application/a2a-agent-card+json",
+  "url": "https://agentcards.host39.org/moonbakery.com/orders.json",
+  "metadata": {
+    "org.projectnanda.agentCardHost": "host39.org",
+    "org.projectnanda.runtime.provider": "AWS",
+    "org.projectnanda.auth.execution": "payment_or_session_token_required"
+  }
+}</pre>
+            <p class="resolution"><span class="rl">Resolution</span><br />NandaIndex → Agent Card at host39.org → AWS runtime → payment or session token required.</p>
+            <p>Moon Bakery needs only a stable identity and a delegated path. No DNS records, no enterprise gateway, no catalog endpoint.</p>
+          </div>
+
+          <div class="example">
+            <h3>6.4 Individual: john@hotmail.com</h3>
+            <p>
+              John has no domain. His runtime is on Azure; his agent card is with a third-party host. No
+              domain ownership required.
+            </p>
+            <pre class="codeblock">{
+  "identifier": "urn:ai:email:john@hotmail.com",
+  "mediaType": "application/a2a-agent-card+json",
+  "url": "https://agentcards.host39.org/personal/john%40hotmail.com/card.json",
+  "metadata": {
+    "org.projectnanda.resolutionRole": "personal-agent-card",
+    "org.projectnanda.auth.metadata": "public_minimal",
+    "org.projectnanda.auth.execution": "user_consent_required"
+  }
+}</pre>
+            <p class="resolution"><span class="rl">Resolution</span><br />NandaIndex → Agent Card at host39.org → Azure runtime → user consent required for private actions.</p>
+          </div>
+        </section>
+
+        <section id="sec-7">
+          <h2><span class="secno">7</span>Case Study: AGNTCY</h2>
+          <p>
+            AGNTCY, the open-source collective spearheaded by Cisco Outshift, LangChain, and Galileo, and
+            now a Linux Foundation project, offers the most advanced working example of the Internet of
+            Agents architecture. It is both a demonstration of how layered interoperability works in
+            practice and a direct collaborator in the global switchboard that this paper builds upon.
+          </p>
+          <p><strong>AGNTCY's discovery stack:</strong></p>
+          <ul>
+            <li><strong>Agent Directory Service (ADS):</strong> The backend registry, using IPFS Kademlia DHT for decentralized routing, OCI-aligned content addressing for immutable storage, and Sigstore-backed integrity verification. Deployable as open-source by any operator.</li>
+            <li><strong>AI Catalog interface:</strong> ADS exposes an AI Catalog-compatible query interface, making it reachable from any AI Catalog-aware tooling.</li>
+            <li><strong>ARD (Agent Resource Discovery):</strong> A standard read-only finder API that AGNTCY implements, allowing external agents to search the directory through the same interface used with other ARD-conforming systems (Hugging Face, GitHub).</li>
+            <li><strong>Agent Gateway (SLIM):</strong> Low-latency communication for multi-agent coordination, supporting peer-to-peer and pub/sub modes.</li>
+          </ul>
+          <p><strong>What this already achieves:</strong></p>
+          <ul>
+            <li>An agent can be described in AGNTCY's ADS and reached via AI Catalog lookup, ARD search, or NandaIndex resolution, all from the same underlying entry</li>
+            <li>AGNTCY already interoperates with AI Catalog and DNS-AID, demonstrating the switchboard model in production</li>
+            <li>The collaboration between NANDA and AGNTCY established the first working cross-organizational switchboard for agent discovery</li>
+          </ul>
+          <p><strong>What remains open, and where NandaIndex adds the next layer:</strong></p>
+          <ul>
+            <li>Resolution of SMB and individual identities that no single enterprise registry owns</li>
+            <li>Bridging to sovereign national directories, telecom registries, and IoT systems as those continue to innovate</li>
+            <li>Formalizing the AI Catalog entry format for non-catalog discovery paths (DNS-AID, gateways, hosted cards)</li>
+          </ul>
+          <p>
+            The global switchboard is the starting point. This paper proposes the next step: a formalized
+            NandaIndex architecture that extends the same model to the full range of actors and emerging
+            registries.
+          </p>
+          <p class="placeholder">
+            [To be expanded with a demo reference: Travel26 as a fully AI Catalog-indexed enterprise, Moon
+            Bakery as an SMB with a third-party agent card, and a personal agent, all resolvable through a
+            NandaIndex and AGNTCY Agent Directory integration.]
+          </p>
+        </section>
+
+        <section id="sec-8">
+          <h2><span class="secno">8</span>Conclusion</h2>
+          <p>
+            Innovation in agent discovery will keep producing new systems: sovereign national directories,
+            telecom registries, IoT catalogs, sector-specific platforms. Each is solving a real problem.
+            The goal is not to consolidate them into one system. The goal is to build bridges that let
+            innovation continue without creating permanent isolation.
+          </p>
+          <p>
+            For enterprises that publish AI Catalog at a well-known endpoint and own the domain, direct
+            resolution already works, and NandaIndex is not in the critical path. This is the clean case,
+            and it should remain simple. For everyone else:
+          </p>
+          <ul>
+            <li>Enterprises on DNS-AID, gateways, or legacy registries get a single NandaIndex entry that makes their existing system reachable from the global switchboard</li>
+            <li>SMBs like Moon Bakery can have runtime, agent card, and domain with three separate providers, and NandaIndex resolves the identity regardless</li>
+            <li>Individuals like john@hotmail.com get discoverability with no domain, no DNS, no enterprise infrastructure</li>
+            <li>Emerging registries (telecom, IoT, sovereign) can join the switchboard with a single entry, with no changes to their internal systems</li>
+          </ul>
+          <p>
+            The NandaIndex global switchboard demonstrated that this model works across organizations.
+            NandaIndex formalizes it as a global architecture. Its entries are AI Catalog entries. Its
+            value is not in replacing what exists, but in making what exists reachable from everything
+            else, and in staying out of the way when it is not needed.
+          </p>
+        </section>
+
+        <section id="refs">
+          <h2>References</h2>
+          <ol class="refs">
+            <li>Cisco Outshift and MIT: Building a Switchboard for the Internet of Agents: Integrating AGNTCY Directory and NANDA Index. <a href="https://outshift.cisco.com/blog/ai-ml/outshift-mit-agentic-web" target="_blank" rel="noopener">outshift.cisco.com/blog/ai-ml/outshift-mit-agentic-web</a></li>
+            <li><a href="https://aaif.io/blog/the-missing-layer-in-ai-interoperability-discovery/" target="_blank" rel="noopener">aaif.io/blog/the-missing-layer-in-ai-interoperability-discovery</a></li>
+            <li><a href="https://agent-card.github.io/ai-catalog/" target="_blank" rel="noopener">agent-card.github.io/ai-catalog</a></li>
+            <li><a href="https://github.com/ards-project/docs" target="_blank" rel="noopener">github.com/ards-project/docs</a></li>
+            <li>Raskar et al.: Beyond DNS: Unlocking the Internet of AI Agents via the NANDA Index and Verified AgentFacts. <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">arxiv.org/abs/2507.14263</a></li>
+            <li>Prior NANDA paper on comparative analysis of agent discovery registries (to be cited).</li>
+            <li>ANS reference (to be added).</li>
+            <li>DNS-AID draft (to be added).</li>
+          </ol>
+        </section>
+
+      </article>
+    </div>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="foot-cols">
+      <div class="foot-col">
+        <p class="foot-h">NandaIndex</p>
+        <a href="index.html#intro">Introduction</a>
+        <a href="index.html#what">What is NANDA Index</a>
+        <a href="index.html#resolve">Try Resolve</a>
+        <a href="explore.html">Browse index records</a>
+      </div>
+      <div class="foot-col">
+        <p class="foot-h">Reference</p>
+        <a href="faq.html">FAQ</a>
+        <a href="glossary.html">Glossary</a>
+      </div>
+      <div class="foot-col">
+        <p class="foot-h">Background</p>
+        <a href="https://outshift.cisco.com/blog/ai-ml/outshift-mit-agentic-web" target="_blank" rel="noopener">Switchboard (Cisco x MIT)</a>
+        <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Beyond DNS</a>
+        <a href="https://projectnanda.org" target="_blank" rel="noopener">Project NANDA</a>
+      </div>
+    </div>
+    <div class="foot-base">
+      <span>NandaIndex Federated Resolution Architecture. For research and discussion. Working draft.</span>
+      <a href="#" class="foot-top">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var links = Array.prototype.slice.call(document.querySelectorAll('.docnav a'));
+      var map = {};
+      links.forEach(function (a) {
+        var h = a.getAttribute('href');
+        if (h && h.charAt(0) === '#') map[h.slice(1)] = a;
+      });
+      var secs = Array.prototype.slice.call(document.querySelectorAll('.doc section'));
+      if (!('IntersectionObserver' in window) || !secs.length) return;
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          links.forEach(function (a) { a.classList.remove('current'); });
+          var cur = map[e.target.id];
+          if (cur) cur.classList.add('current');
+        });
+      }, { rootMargin: '-20% 0px -70% 0px' });
+      secs.forEach(function (s) { io.observe(s); });
+    })();
+  </script>
+</body>
+</html>

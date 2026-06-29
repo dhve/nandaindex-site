@@ -3,461 +3,344 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NANDA Index · The index for the Internet of AI Agents</title>
-  <meta name="description" content="The NANDA Index: a lean, DNS-inspired index that resolves any agent identity to dynamic, cryptographically verifiable AgentFacts. Discovery, identity and authentication for the Internet of AI Agents." />
-  <link rel="stylesheet" href="styles.css?v=6" />
+  <title>NandaIndex · A federated resolution layer for agent discovery</title>
+  <meta name="description" content="NandaIndex is a federation layer that maps a stable identity to the correct discovery object, using the AI Catalog entry as its index-record format. It bridges discovery systems rather than consolidating them." />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body>
 
   <!-- ============ TOPBAR ============ -->
   <header class="topbar">
     <div class="brand">
-      <a href="index.html" class="brand-link"><strong>NANDA</strong> Index</a>
-      <span class="tag">Working draft v0.3 · Project NANDA</span>
+      <a href="index.html" class="brand-link"><strong>Nanda</strong>Index</a>
+      <span class="tag">Working draft</span>
     </div>
     <nav class="navlinks">
-      <a href="#browse">Browse</a>
-      <a href="#why">Why</a>
-      <a href="#what">What</a>
-      <a href="#how">How it works</a>
-      <a href="#resolve">Resolve</a>
-      <a href="explore.html">Explore</a>
+      <a href="explore.html">Browse</a>
       <a href="faq.html">FAQ</a>
+      <a href="glossary.html">Glossary</a>
     </nav>
   </header>
 
-  <main>
+  <div class="doc-wrap">
 
-    <!-- ============ HERO ============ -->
-    <section class="hero hero-2col">
-      <div class="hero-left">
-        <p class="eyebrow"><span class="mk">NANDA</span> Networked AI Agents in a Decentralized Architecture</p>
-        <h1>A global switchboard for the <span class="hl">Internet of AI Agents</span>.</h1>
-        <p class="lede">
-          The web is poised to host billions of autonomous agents that negotiate, delegate and migrate
-          in milliseconds. The NANDA Index resolves any agent identity to dynamic, cryptographically
-          signed <code class="tok">AgentFacts</code> — a minimal, DNS-inspired layer for discovery,
-          authentication and trust, <strong>without abandoning existing web infrastructure</strong>.
-        </p>
-
-        <div class="hero-cta">
-          <a class="btn primary" href="explore.html">Browse the index <span class="arr">→</span></a>
-          <a class="btn" href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Read the paper</a>
-          <a class="btn" href="faq.html">FAQ</a>
-        </div>
-
-        <div class="stats">
-          <div class="stat"><div class="num">≤120<small> B</small></div><div class="lbl">lean index record</div></div>
-          <div class="stat"><div class="num">&lt;1<small> s</small></div><div class="lbl">global resolution</div></div>
-          <div class="stat"><div class="num">10⁴<small>×</small></div><div class="lbl">fewer index writes</div></div>
-          <div class="stat"><div class="num">&lt;1<small> s</small></div><div class="lbl">revocation &amp; key rotation</div></div>
-        </div>
-      </div>
-
-      <!-- switchboard routing: identities patched through the index to the right discovery object.
-           Pulses use SVG animateMotion (glowing yellow balls) so they animate boldly and run
-           regardless of the OS reduced-motion setting. -->
-      <div class="hero-viz">
-        <svg class="switchboard" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 420 320" role="img"
-             aria-label="The NANDA Index patches domain, email and URN identities through to AI Catalog, DNS-AID and Agent Card discovery objects.">
-          <defs>
-            <filter id="swGlow" x="-80%" y="-80%" width="260%" height="260%">
-              <feGaussianBlur stdDeviation="3" result="b"/>
-              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-          </defs>
-
-          <!-- wiring (referenced by the travelling pulses) -->
-          <path id="w1" class="sw-line" d="M58 80 L210 160"/>
-          <path id="w2" class="sw-line" d="M58 160 L210 160"/>
-          <path id="w3" class="sw-line" d="M58 240 L210 160"/>
-          <path id="w4" class="sw-line" d="M210 160 L362 80"/>
-          <path id="w5" class="sw-line" d="M210 160 L362 160"/>
-          <path id="w6" class="sw-line" d="M210 160 L362 240"/>
-
-          <!-- pulsing hub halo -->
-          <circle cx="210" cy="160" r="16" fill="none" stroke="#F2C400" stroke-width="2.5">
-            <animate attributeName="r" values="14;32" dur="2.4s" repeatCount="indefinite"/>
-            <animate attributeName="opacity" values="0.6;0" dur="2.4s" repeatCount="indefinite"/>
-          </circle>
-
-          <!-- travelling pulses: glowing NANDA-yellow balls -->
-          <circle class="sw-ball" r="5" filter="url(#swGlow)"><animateMotion dur="1.7s" begin="0s"    repeatCount="indefinite"><mpath href="#w1" xlink:href="#w1"/></animateMotion></circle>
-          <circle class="sw-ball" r="5" filter="url(#swGlow)"><animateMotion dur="1.7s" begin="0.28s" repeatCount="indefinite"><mpath href="#w2" xlink:href="#w2"/></animateMotion></circle>
-          <circle class="sw-ball" r="5" filter="url(#swGlow)"><animateMotion dur="1.7s" begin="0.56s" repeatCount="indefinite"><mpath href="#w3" xlink:href="#w3"/></animateMotion></circle>
-          <circle class="sw-ball" r="5" filter="url(#swGlow)"><animateMotion dur="1.7s" begin="0.85s" repeatCount="indefinite"><mpath href="#w4" xlink:href="#w4"/></animateMotion></circle>
-          <circle class="sw-ball" r="5" filter="url(#swGlow)"><animateMotion dur="1.7s" begin="1.13s" repeatCount="indefinite"><mpath href="#w5" xlink:href="#w5"/></animateMotion></circle>
-          <circle class="sw-ball" r="5" filter="url(#swGlow)"><animateMotion dur="1.7s" begin="1.41s" repeatCount="indefinite"><mpath href="#w6" xlink:href="#w6"/></animateMotion></circle>
-
-          <!-- glowing index hub (3x3 mark) -->
-          <g class="sw-hub" filter="url(#swGlow)">
-            <rect x="190" y="140" width="40" height="40" rx="10"/>
-            <circle class="cd" cx="200" cy="150" r="2.4"/><circle class="cd" cx="210" cy="150" r="2.4"/><circle class="cd" cx="220" cy="150" r="2.4"/>
-            <circle class="cd" cx="200" cy="160" r="2.4"/><circle class="cd" cx="210" cy="160" r="2.4"/><circle class="cd" cx="220" cy="160" r="2.4"/>
-            <circle class="cd" cx="200" cy="170" r="2.4"/><circle class="cd" cx="210" cy="170" r="2.4"/><circle class="cd" cx="220" cy="170" r="2.4"/>
-          </g>
-
-          <!-- source nodes (identities) -->
-          <circle class="sw-src" cx="58" cy="80" r="5"/>
-          <circle class="sw-src" cx="58" cy="160" r="5"/>
-          <circle class="sw-src" cx="58" cy="240" r="5"/>
-
-          <!-- destination nodes (discovery objects), flash yellow as a call arrives -->
-          <circle class="sw-dst" cx="362" cy="80" r="5">
-            <animate attributeName="fill" values="#0E0E0E;#0E0E0E;#F2C400;#0E0E0E" keyTimes="0;0.4;0.55;1" dur="1.7s" begin="0.85s" repeatCount="indefinite"/>
-            <animate attributeName="r" values="5;5;8;5" keyTimes="0;0.4;0.55;1" dur="1.7s" begin="0.85s" repeatCount="indefinite"/>
-          </circle>
-          <circle class="sw-dst" cx="362" cy="160" r="5">
-            <animate attributeName="fill" values="#0E0E0E;#0E0E0E;#F2C400;#0E0E0E" keyTimes="0;0.4;0.55;1" dur="1.7s" begin="1.13s" repeatCount="indefinite"/>
-            <animate attributeName="r" values="5;5;8;5" keyTimes="0;0.4;0.55;1" dur="1.7s" begin="1.13s" repeatCount="indefinite"/>
-          </circle>
-          <circle class="sw-dst" cx="362" cy="240" r="5">
-            <animate attributeName="fill" values="#0E0E0E;#0E0E0E;#F2C400;#0E0E0E" keyTimes="0;0.4;0.55;1" dur="1.7s" begin="1.41s" repeatCount="indefinite"/>
-            <animate attributeName="r" values="5;5;8;5" keyTimes="0;0.4;0.55;1" dur="1.7s" begin="1.41s" repeatCount="indefinite"/>
-          </circle>
-
-          <!-- labels -->
-          <text class="sw-label" x="48" y="84" text-anchor="end">domain</text>
-          <text class="sw-label" x="48" y="164" text-anchor="end">email</text>
-          <text class="sw-label" x="48" y="244" text-anchor="end">urn</text>
-          <text class="sw-label" x="372" y="84">AI Catalog</text>
-          <text class="sw-label" x="372" y="164">DNS-AID</text>
-          <text class="sw-label" x="372" y="244">Agent Card</text>
-          <text class="sw-hub-cap" x="210" y="202" text-anchor="middle">NANDA</text>
-        </svg>
-      </div>
-    </section>
-
-    <!-- ============ BROWSE ============ -->
-    <section class="panel browse-sec" id="browse">
-      <div class="browse-head">
-        <h2>Browse</h2>
-        <a class="browse-all" href="explore.html">Explore all entries →</a>
-      </div>
-      <p class="browse-intro">
-        A secure directory of verified agent registries. Filter by category and inspect any
-        record's identity, capabilities and full resolution path.
+    <!-- ============ TITLE ============ -->
+    <header class="doc-hero">
+      <p class="eyebrow">NandaIndex · Federated Resolution Architecture</p>
+      <h1>A global switchboard for agent discovery</h1>
+      <p class="subtitle">Mapping stable identities to the correct discovery object across enterprises, SMBs, and individuals.</p>
+      <p class="abstract">
+        Agent discovery is diverging into many discovery systems: AI Catalog, DNS-AID, ANS,
+        <code>.well-known</code> endpoints, A2A cards, MCP descriptors, gateways, platform registries,
+        and emerging telecom, IoT, and sovereign directories. NandaIndex is a federation layer over
+        them. It maps a stable identity to the correct next discovery object, using the AI Catalog
+        Catalog Entry itself as the index-record format. It bridges these systems rather than
+        consolidating them, and it stays out of the critical path wherever direct resolution already
+        works.
       </p>
-      <div class="card-grid" id="browsePreview"></div>
-    </section>
+    </header>
 
-    <!-- ============ WHY ============ -->
-    <section class="panel" id="why">
-      <header class="panel-head">
-        <h2>Why</h2>
-        <span class="kld">DNS was built for sites, not agents</span>
-      </header>
-      <div class="panel-body">
-        <p class="panel-intro">
-          A TLS certificate proves you own a domain. It says nothing about an agent's code, its
-          behaviour, or whether its capabilities are real. As workloads shift from minute-to-hour
-          update cycles to millisecond orchestration, five pressures break the current stack.
-        </p>
-        <div class="features">
-          <div class="feature">
-            <span class="fnum">01</span>
-            <h3>Index writes &amp; delay</h3>
-            <p>DNS, BGP and WHOIS were built for millions of static records, not billions of updates per hour or sub-second worldwide sync.</p>
-          </div>
-          <div class="feature">
-            <span class="fnum">02</span>
-            <h3>Trust gap</h3>
-            <p>Owning a domain is not the same as proving an agent's behaviour. The web needs signed capability proofs and instant revocation.</p>
-          </div>
-          <div class="feature">
-            <span class="fnum">03</span>
-            <h3>Privacy &amp; split-horizon</h3>
-            <p>Today's lookups expose who is asking for what. Enterprises need private, split-horizon resolution and tamper-evident audit logs.</p>
-          </div>
-          <div class="feature">
-            <span class="fnum">04</span>
-            <h3>Routing limits</h3>
-            <p>Fixed A and AAAA records cannot keep up with agents that move every few seconds or need geo-based DDoS shuffling.</p>
-          </div>
-          <div class="feature">
-            <span class="fnum">05</span>
-            <h3>Governance &amp; liability</h3>
-            <p>Without a transparent, append-only log, no one can prove compliance or assign blame when agents misbehave across borders.</p>
-          </div>
-          <div class="feature accent">
-            <span class="fnum">THE BET</span>
-            <h3>One index, not a rebuild</h3>
-            <p>Decouple identity from metadata, support multi-hop resolution, and provide a flexible substrate for discovery, routing and capability negotiation.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+    <div class="doc-layout">
 
-    <!-- ============ WHAT ============ -->
-    <section class="panel" id="what">
-      <header class="panel-head">
-        <h2>What</h2>
-        <span class="kld">Lean record · verifiable AgentFacts</span>
-      </header>
-      <div class="panel-body">
-        <p class="panel-intro">
-          NANDA pairs a lean record holding only essential static metadata with a self-describing
-          <code class="tok">AgentFacts</code> schema (signed JSON-LD) that lets agents update
-          capabilities, endpoints and authentication without ever touching the index. In effect the
-          index is a global switchboard: it connects a request to the right discovery object, then
-          steps out of the way. The result is a lightweight, horizontally scalable foundation for
-          secure, trust-aware collaboration, with five concrete guarantees.
-        </p>
+      <!-- ============ SECTION INDEX ============ -->
+      <aside class="docnav" aria-label="Contents">
+        <p class="docnav-title">On this page</p>
+        <ol>
+          <li><a href="#intro">Introduction</a></li>
+          <li><a href="#what">What is NANDA Index</a></li>
+          <li><a href="#resolve">Try Resolve</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="glossary.html">Glossary</a></li>
+          <li><a href="#references">References</a></li>
+        </ol>
+      </aside>
 
-        <div class="glist">
-          <div class="gitem">
-            <span class="gn">1</span>
-            <div class="gtxt"><h3>A quilt-like index</h3><p>NANDA-native agents and third-party agents from existing registries are both discoverable through one index.</p></div>
-          </div>
-          <div class="gitem">
-            <span class="gn">2</span>
-            <div class="gtxt"><h3>Rapid global resolution</h3><p>Newly spawned agents become resolvable worldwide in under a second of global propagation.</p></div>
-          </div>
-          <div class="gitem">
-            <span class="gn">3</span>
-            <div class="gtxt"><h3>Sub-second revocation &amp; key rotation</h3><p>Credential revocation and key rotation propagate in under a second through a VC status list.</p></div>
-          </div>
-          <div class="gitem">
-            <span class="gn">4</span>
-            <div class="gtxt"><h3>Schema-validated capability assertions</h3><p>Capabilities are validated against a schema and signed as W3C Verifiable Credentials, not self-asserted prose.</p></div>
-          </div>
-          <div class="gitem">
-            <span class="gn">5</span>
-            <div class="gtxt"><h3>Privacy-preserving discovery</h3><p>Least-disclosure, unlinkable lookups work across organisational boundaries without leaking who asked.</p></div>
-          </div>
-        </div>
+      <!-- ============ DOCUMENT BODY ============ -->
+      <article class="doc">
 
-        <p class="panel-intro" style="margin-top:22px;">
-          <strong>The quilt.</strong> NANDA does not need to authorize or govern every agent on the web.
-          Commercial, government and individual registries decide what is visible; the index merely
-          holds a verifiable pointer to the right discovery object.
-        </p>
-        <div class="quilt-tags">
-          <span class="qtag"><span class="dot"></span> NLWeb agents</span>
-          <span class="qtag"><span class="dot"></span> NANDA native <code>@agentx</code></span>
-          <span class="qtag"><span class="dot"></span> IoT agents</span>
-          <span class="qtag"><span class="dot"></span> MCP servers</span>
-          <span class="qtag"><span class="dot"></span> Enterprise <code>@company:shop</code></span>
-          <span class="qtag"><span class="dot"></span> Government <code>@japan:shop</code></span>
-          <span class="qtag"><span class="dot"></span> .well-known URN</span>
-          <span class="qtag"><span class="dot"></span> Decentralized <code>@DID:company</code></span>
-        </div>
-      </div>
-    </section>
+        <section id="intro">
+          <h2>Introduction</h2>
+          <p>
+            Innovation drives divergence. Different communities solve different problems: enterprises
+            manage compliance, developers build open tools, governments stand up sovereign registries,
+            telecom operators integrate agents into carrier networks. Each arrives at a different
+            discovery system. This is healthy ecosystem behaviour, not a coordination failure.
+          </p>
+          <p>
+            Left unconnected, these systems become discovery islands. A requester that speaks AI Catalog
+            cannot resolve an identity published only through DNS-AID, behind a gateway, or on a
+            third-party card host. The reachable set is bounded by the one mechanism a requester happens
+            to implement.
+          </p>
+          <p>
+            AI Catalog is a strong starting point for public enterprise resource discovery. It is a
+            typed, nestable, machine-readable container for heterogeneous AI artifacts: A2A Agent Cards,
+            MCP server descriptors, nested catalogs, tools, skills, datasets, and gateways. It does not
+            cover every actor or every discovery system. SMBs and individuals need discoverability with
+            no enterprise infrastructure, and non-catalog systems need a way to be reached.
+          </p>
+          <p>The goal is not to consolidate everything into one system. The goal is to build bridges.</p>
+        </section>
 
-    <!-- ============ HOW ============ -->
-    <section class="panel" id="how">
-      <header class="panel-head">
-        <h2>How it works</h2>
-        <span class="kld">Three layers</span>
-      </header>
-      <div class="panel-body">
-        <p class="panel-intro">
-          The architecture cleanly separates static identity, verifiable metadata and dynamic routing.
-          That separation cuts index write load by roughly 10,000x while keeping global resolution
-          under a second.
-        </p>
+        <section id="what">
+          <h2>What is NANDA Index</h2>
+          <p>
+            NandaIndex is an AI Catalog-formatted database of index records. It introduces no new record
+            format. Each entry is an AI Catalog Catalog Entry that maps one identity to the correct next
+            discovery object. It strengthens AI Catalog by making it the framework through which other
+            discovery systems are bridged.
+          </p>
+          <div class="table-scroll">
+            <table class="spec-table">
+              <thead><tr><th>Concept</th><th>Implementation</th></tr></thead>
+              <tbody>
+                <tr><th>Entry</th><td>AI Catalog Catalog Entry</td></tr>
+                <tr><th>Identity</th><td>URN / URI identifier</td></tr>
+                <tr><th>Target</th><td>URL, or inline routing data</td></tr>
+                <tr><th>Routing hints</th><td>Metadata fields (<code>org.projectnanda.*</code>)</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>A NandaIndex entry can point to any of the following targets:</p>
+          <ul>
+            <li>AI Catalog record or <code>.well-known</code> URL</li>
+            <li>DNS-AID record</li>
+            <li>AGNTCY Agent Directory (ADS) entry</li>
+            <li>ANS record or DID</li>
+            <li>Enterprise gateway</li>
+            <li>A2A Agent Card or MCP descriptor</li>
+            <li>Hosted SMB or personal agent card</li>
+            <li>Telecom, IoT, EdgeAI, or sovereign national registry</li>
+          </ul>
 
-        <div class="features" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px;">
-          <div class="feature">
-            <span class="fnum">LAYER 01 · ANCHOR</span>
-            <h3>Lean Index</h3>
-            <p>A decentralized mapping from agent IDs to a tiny <code>AgentAddr</code> (about 120 bytes) holding a DID, TTL, pointers and an Ed25519 signature. Cacheable, signed, tamper-resistant.</p>
-          </div>
-          <div class="feature">
-            <span class="fnum">LAYER 02 · METADATA</span>
-            <h3>AgentFacts</h3>
-            <p>Self-describing JSON-LD documents, each a W3C Verifiable Credential, carrying endpoints, capabilities and auth. Agents update them independently, split across a primary and a privacy-preserving URL.</p>
-          </div>
-          <div class="feature">
-            <span class="fnum">LAYER 03 · ROUTING</span>
-            <h3>Dynamic Resolution</h3>
-            <p>Latency, privacy and resilience-aware endpoint selection: static endpoints (TTL 1 to 6h), an adaptive resolver for geo load-balancing and DDoS mitigation, and rotating endpoints (TTL 5 to 15m).</p>
-          </div>
-        </div>
+          <h3>Permissionless deployment</h3>
+          <p>
+            An identity does not require a unified infrastructure stack. The agent runtime can live on
+            one provider (AWS, Azure, GCP, Railway, Cloudflare), the agent card can be hosted by a
+            separate third-party card host (for example <code>host39.org</code>), and the brand domain
+            can sit on yet another platform. No single party controls all three. No enterprise gateway or
+            DNS certificate is required.
+          </p>
 
-        <pre class="codeblock"><span class="c-head">// AgentAddr: the lean index record an identity resolves to</span>
-<span class="p">{</span>
-  <span class="k">"id"</span><span class="p">:</span> <span class="s">"did:nanda:@japan:shop"</span><span class="p">,</span>
-  <span class="k">"ttl"</span><span class="p">:</span> <span class="n">3600</span><span class="p">,</span>                 <span class="d">// seconds</span>
-  <span class="k">"facts_url"</span><span class="p">:</span> <span class="s">"https://facts.example/agent.jsonld"</span><span class="p">,</span>
-  <span class="k">"private_facts_url"</span><span class="p">:</span> <span class="s">"ipfs://bafy.../facts"</span><span class="p">,</span>
-  <span class="k">"adaptive_resolver_url"</span><span class="p">:</span> <span class="s">"https://r.nanda/agent"</span><span class="p">,</span>
-  <span class="k">"signature"</span><span class="p">:</span> <span class="s">"ed25519:9f3c...c1a"</span>
-<span class="p">}</span></pre>
-        <div class="code-meta">
-          <span class="badge l1">≤ 120 bytes</span>
-          <span class="badge l2">Ed25519 signed</span>
-          <span class="badge">resolves to verifiable AgentFacts</span>
-        </div>
+          <h3>What is host39.org</h3>
+          <p>
+            <code>host39.org</code> is a third-party agent-card host. It lets SMBs and individuals
+            publish agent-card information even when they do not own a DNS domain or cannot run catalog
+            infrastructure on their own domain. The runtime can live with one provider and the brand
+            domain with another; host39.org serves the agent card, and a NandaIndex entry points to it.
+            The hosted-card example below resolves exactly this way.
+          </p>
 
-        <div class="principle">
-          <span class="badge ink">Verify on claim</span>
-          <span class="badge ink">Authenticate on update</span>
-          <span class="badge ink">Attest on read</span>
-        </div>
-      </div>
-    </section>
+          <h3>Not in the critical path</h3>
+          <p>
+            When an enterprise publishes AI Catalog at a well-known endpoint and owns the domain, direct
+            resolution already works. Any requester fetches the catalog directly, and a NandaIndex entry
+            is optional. It remains useful for fallback, federation visibility, migration, and
+            anti-squatting, but it is not required. NandaIndex adds value at the edges: actors that
+            cannot publish a well-known catalog, discovery systems that are not AI Catalog-compatible,
+            and federation across registries.
+          </p>
 
-    <!-- ============ RESOLVE ============ -->
-    <section class="panel" id="resolve">
-      <header class="panel-head">
-        <h2>Resolve</h2>
-        <span class="kld">One identity, four hops</span>
-      </header>
-      <div class="panel-body">
-        <p class="panel-intro">
-          Every agent identity resolves through the same sequence — whatever path it registered by.
-          The switchboard routes the first hop, then steps aside: hops 1–3 cache at the record TTL,
-          and after hop 4 NANDA leaves the critical path entirely.
-        </p>
-        <div class="resolve-top">
-          <code class="urn-pill">urn:ai:domain:acme.com:agent:time</code>
-          <button class="btn primary" id="traceBtn" type="button">▶ Trace</button>
-        </div>
-        <div class="trace-bar"><div class="trace-fill" id="traceFill"></div></div>
-        <div class="hops">
-          <div class="hop" data-hop="1">
-            <div class="hop-top"><span class="hn">1</span><span class="hdot"></span></div>
-            <h3>NANDA Index</h3>
-            <p class="hq">Who manages this identity?</p>
-            <div class="hio">
-              <div><span class="lab">in&nbsp;&nbsp;</span><span class="val">locator: urn:ai:domain:acme.com:agent:time</span></div>
-              <div><span class="lab">out&nbsp;</span><span class="val">IndexRecord { registry_url, media_type, ttl }</span></div>
-              <div class="hapi">GET /api/v1/resolve?locator=…</div>
-            </div>
+          <h3>Where each system fits</h3>
+          <div class="table-scroll">
+            <table class="spec-table">
+              <thead>
+                <tr><th>Mechanism</th><th>Best suited for</th><th>Where a bridge adds value</th></tr>
+              </thead>
+              <tbody>
+                <tr><th>AI Catalog</th><td>Rich enterprise resource indexing; typed, nestable, multi-artifact</td><td>Entities without domain names; cross-system linking</td></tr>
+                <tr><th>DNS-AID</th><td>Domain-controlled, fast, cacheable enterprise resolution, published under <code>_agents.&lt;domain&gt;</code> (for example <code>refunds._agents.skyblue.com</code>)</td><td>SMBs, individuals, non-DNS systems</td></tr>
+                <tr><th>AGNTCY ADS</th><td>Decentralized DHT routing; OCI storage; verifiable integrity</td><td>Linking into catalog-based or index-based lookups</td></tr>
+                <tr><th>Gateways</th><td>Access control, privacy, throttling, compliance</td><td>Discovery of agents not behind that gateway</td></tr>
+                <tr><th>ANS / DIDs</th><td>Identity and ownership proof</td><td>Resource indexing, routing</td></tr>
+                <tr><th>ARD</th><td>Read-only standard finder API across conforming registries</td><td>Content management, signing, cross-registry federation</td></tr>
+                <tr><th>Platform registries</th><td>Onboarding, hosting, billing, developer experience</td><td>Cross-platform and cross-community discovery</td></tr>
+                <tr><th>Telecom / IoT / Sovereign</th><td>Sector governance, carrier integration, national compliance</td><td>Bridging into a global index</td></tr>
+              </tbody>
+            </table>
           </div>
-          <div class="hop" data-hop="2">
-            <div class="hop-top"><span class="hn">2</span><span class="hdot"></span></div>
-            <h3>Agent Source</h3>
-            <p class="hq">What is this agent’s entry?</p>
-            <div class="hio">
-              <div><span class="lab">in&nbsp;&nbsp;</span><span class="val">IndexRecord.registry_url + identifier</span></div>
-              <div><span class="lab">out&nbsp;</span><span class="val">CatalogEntry { url, displayName, tags }</span></div>
-              <div class="hapi">GET &lt;registry_url&gt;/agents/&lt;id&gt;</div>
-            </div>
-          </div>
-          <div class="hop" data-hop="3">
-            <div class="hop-top"><span class="hn">3</span><span class="hdot"></span></div>
-            <h3>Agent Card</h3>
-            <p class="hq">What can this agent do?</p>
-            <div class="hio">
-              <div><span class="lab">in&nbsp;&nbsp;</span><span class="val">CatalogEntry.url</span></div>
-              <div><span class="lab">out&nbsp;</span><span class="val">AgentCard { url, auth, skills, … }</span></div>
-              <div class="hapi">GET &lt;catalog_entry.url&gt;</div>
-            </div>
-          </div>
-          <div class="hop" data-hop="4">
-            <div class="hop-top"><span class="hn">4</span><span class="hdot"></span></div>
-            <h3>Talk with Agent</h3>
-            <p class="hq">Send a task directly.</p>
-            <div class="hio">
-              <div><span class="lab">in&nbsp;&nbsp;</span><span class="val">AgentCard.url + { message }</span></div>
-              <div><span class="lab">out&nbsp;</span><span class="val">Task result from agent runtime</span></div>
-              <div class="hapi">POST &lt;agent_card.url&gt;/run</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- ============ PRIOR WORK ============ -->
-    <section class="panel" id="reading">
-      <header class="panel-head">
-        <h2>Prior work &amp; background</h2>
-        <span class="kld">Papers · announcements · write-ups</span>
-      </header>
-      <div class="panel-body">
-        <div class="linkrows">
-          <a class="linkrow" href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">
-            <span class="lr-kind">arXiv 2507.14263</span>
-            <span class="lr-main"><h3>Beyond DNS: Unlocking the Internet of AI Agents</h3><p>The foundational NANDA Index and Verified AgentFacts architecture, Raskar et al. (MIT). The why and what of the whole project.</p></span>
-            <span class="lr-arrow">↗</span>
-          </a>
-          <a class="linkrow" href="https://arxiv.org/abs/2508.03101" target="_blank" rel="noopener">
-            <span class="lr-kind">arXiv 2508.03101</span>
-            <span class="lr-main"><h3>Using the NANDA Index in Practice</h3><p>An enterprise perspective: Zero Trust Agentic Access, capability attestation, and interoperability across MCP, A2A and NLWeb.</p></span>
-            <span class="lr-arrow">↗</span>
-          </a>
-          <a class="linkrow" href="https://outshift.cisco.com/blog/ai-ml/outshift-mit-agentic-web" target="_blank" rel="noopener">
-            <span class="lr-kind">Cisco × MIT</span>
-            <span class="lr-main"><h3>Building the agentic web</h3><p>The original Cisco Outshift and MIT collaboration announcing the push toward an open, agentic internet built on NANDA.</p></span>
-            <span class="lr-arrow">↗</span>
-          </a>
-          <a class="linkrow" href="https://www.cloudnativenotes.com/post/navigating-internet-of-agents/" target="_blank" rel="noopener">
-            <span class="lr-kind">Cloud Native Notes</span>
-            <span class="lr-main"><h3>Navigating the Internet of Agents</h3><p>An independent walkthrough of the emerging agent-discovery landscape and where NANDA fits within it.</p></span>
-            <span class="lr-arrow">↗</span>
-          </a>
-          <a class="linkrow" href="https://projectnanda.org" target="_blank" rel="noopener">
-            <span class="lr-kind">MIT Media Lab</span>
-            <span class="lr-main"><h3>Project NANDA</h3><p>The home of the research initiative architecting the Internet of AI Agents: people, demos and the broader roadmap.</p></span>
-            <span class="lr-arrow">↗</span>
-          </a>
-          <a class="linkrow" href="faq.html">
-            <span class="lr-kind">On this site</span>
-            <span class="lr-main"><h3>Frequently asked questions</h3><p>AgentFacts, the quilt model, privacy, how NANDA relates to MCP and A2A, and how to register or resolve an agent.</p></span>
-            <span class="lr-arrow">→</span>
-          </a>
-        </div>
-      </div>
-    </section>
+          <h3>Anatomy of an entry</h3>
+          <p>
+            Every entry carries four things: a stable <code>identifier</code>, the <code>mediaType</code>
+            of the target, the target itself (a <code>url</code> or inline <code>data</code>), and
+            <code>metadata</code> routing hints. This entry targets a hosted agent card by URL; the
+            runtime, the card host, and the domain are three separate providers.
+          </p>
+          <pre class="codeblock">{
+  "identifier": "urn:ai:domain:moonbakery.com:agent:orders",
+  "mediaType": "application/a2a-agent-card+json",
+  "url": "https://agentcards.host39.org/moonbakery.com/orders.json",
+  "metadata": {
+    "org.projectnanda.agentCardHost": "host39.org",
+    "org.projectnanda.runtime.provider": "AWS",
+    "org.projectnanda.auth.execution": "payment_or_session_token_required"
+  }
+}</pre>
+        </section>
 
-  </main>
+        <section id="resolve">
+          <h2>Try Resolve</h2>
+          <p>
+            Pick an identity and resolve it through the switchboard. NandaIndex maps the identity to a
+            discovery object and returns its routing hints; the requester then reads the discovery
+            object, the agent card for endpoint and auth, and finally calls the runtime. NandaIndex
+            routes the first hop and then steps aside.
+          </p>
+          <div class="rsv-controls">
+            <select class="rsv-select" id="rsvSelect" aria-label="Choose an identity to resolve"></select>
+            <button class="btn primary" id="rsvBtn" type="button">Resolve</button>
+          </div>
+          <ol class="rsv-trace" id="rsvTrace"></ol>
+        </section>
+
+        <section id="references">
+          <h2>References</h2>
+          <div class="linkrows">
+            <a class="linkrow" href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">
+              <span class="lr-kind">arXiv 2507.14263</span>
+              <span class="lr-main"><h3>Beyond DNS: Unlocking the Internet of AI Agents</h3><p>The NANDA Index and Verified AgentFacts architecture. Raskar et al., MIT.</p></span>
+              <span class="lr-arrow">↗</span>
+            </a>
+            <a class="linkrow" href="https://arxiv.org/abs/2508.03101" target="_blank" rel="noopener">
+              <span class="lr-kind">arXiv 2508.03101</span>
+              <span class="lr-main"><h3>Using the NANDA Index Architecture in Practice</h3><p>An enterprise perspective: Zero Trust Agentic Access and interoperability across MCP, A2A, and NLWeb.</p></span>
+              <span class="lr-arrow">↗</span>
+            </a>
+            <a class="linkrow" href="https://outshift.cisco.com/blog/ai-ml/outshift-mit-agentic-web" target="_blank" rel="noopener">
+              <span class="lr-kind">Cisco Outshift x MIT</span>
+              <span class="lr-main"><h3>Building a Switchboard for the Internet of Agents</h3><p>Integrating the AGNTCY Agent Directory and the NANDA Index. The practical foundation for the switchboard model.</p></span>
+              <span class="lr-arrow">↗</span>
+            </a>
+            <a class="linkrow" href="https://aaif.io/blog/the-missing-layer-in-ai-interoperability-discovery/" target="_blank" rel="noopener">
+              <span class="lr-kind">AAIF</span>
+              <span class="lr-main"><h3>The Missing Layer in AI Interoperability: Discovery</h3><p>Background on the discovery gap that index and switchboard approaches address.</p></span>
+              <span class="lr-arrow">↗</span>
+            </a>
+            <a class="linkrow" href="https://agent-card.github.io/ai-catalog/" target="_blank" rel="noopener">
+              <span class="lr-kind">Specification</span>
+              <span class="lr-main"><h3>AI Catalog</h3><p>The typed, nestable index-record format that NandaIndex entries are built on.</p></span>
+              <span class="lr-arrow">↗</span>
+            </a>
+            <a class="linkrow" href="https://github.com/ards-project/docs" target="_blank" rel="noopener">
+              <span class="lr-kind">ards-project</span>
+              <span class="lr-main"><h3>ARD (Agent Resource Discovery)</h3><p>The read-only standard finder API across conforming registries.</p></span>
+              <span class="lr-arrow">↗</span>
+            </a>
+            <a class="linkrow" href="https://projectnanda.org" target="_blank" rel="noopener">
+              <span class="lr-kind">MIT Media Lab</span>
+              <span class="lr-main"><h3>Project NANDA</h3><p>The research initiative architecting the Internet of AI Agents.</p></span>
+              <span class="lr-arrow">↗</span>
+            </a>
+          </div>
+        </section>
+
+      </article>
+    </div>
+  </div>
 
   <!-- ============ FOOTER ============ -->
-  <footer class="bottom">
-    <span>Project NANDA · MIT Media Lab. For research and discussion. v0.3, request for comments.</span>
-    <span class="fl">
-      <a href="faq.html">FAQ</a>
-      <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Beyond DNS</a>
-      <a href="https://projectnanda.org" target="_blank" rel="noopener">projectnanda.org</a>
-    </span>
+  <footer class="site-footer">
+    <div class="foot-cols">
+      <div class="foot-col">
+        <p class="foot-h">NandaIndex</p>
+        <a href="index.html#intro">Introduction</a>
+        <a href="index.html#what">What is NANDA Index</a>
+        <a href="index.html#resolve">Try Resolve</a>
+        <a href="explore.html">Browse index records</a>
+      </div>
+      <div class="foot-col">
+        <p class="foot-h">Reference</p>
+        <a href="faq.html">FAQ</a>
+        <a href="glossary.html">Glossary</a>
+      </div>
+      <div class="foot-col">
+        <p class="foot-h">Background</p>
+        <a href="https://outshift.cisco.com/blog/ai-ml/outshift-mit-agentic-web" target="_blank" rel="noopener">Switchboard (Cisco x MIT)</a>
+        <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Beyond DNS</a>
+        <a href="https://projectnanda.org" target="_blank" rel="noopener">Project NANDA</a>
+      </div>
+    </div>
+    <div class="foot-base">
+      <span>NandaIndex Federated Resolution Architecture. For research and discussion. Working draft.</span>
+      <a href="#" class="foot-top">Back to top ↑</a>
+    </div>
   </footer>
 
-  <!-- four-hop resolve trace: progressive enhancement; the section is fully
-       legible with JS disabled, this only adds the step-through animation. -->
-  <script>
-    (function () {
-      // The trace is a core showcase, so it always plays (not gated on reduced-motion).
-      var reduced = false;
-      var hops = Array.prototype.slice.call(document.querySelectorAll('.hop'));
-      var fill = document.getElementById('traceFill');
-      var btn = document.getElementById('traceBtn');
-      if (!hops.length) return;
-      var timers = [];
-      function paint(active) {
-        if (fill) fill.style.width = (active / hops.length * 100) + '%';
-        hops.forEach(function (el) {
-          var n = +el.getAttribute('data-hop');
-          el.classList.toggle('lit', n <= active);
-          el.classList.toggle('active', n === active);
-        });
-      }
-      function play() {
-        timers.forEach(clearTimeout); timers = [];
-        paint(0);
-        if (reduced) { paint(hops.length); return; }
-        for (var i = 1; i <= hops.length; i++) {
-          (function (step) { timers.push(setTimeout(function () { paint(step); }, step * 780)); })(i);
-        }
-      }
-      if (btn) btn.addEventListener('click', play);
-      if (reduced) { paint(hops.length); return; }
-      // auto-play once when the section scrolls into view
-      if ('IntersectionObserver' in window) {
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (e) { if (e.isIntersecting) { play(); io.disconnect(); } });
-        }, { threshold: 0.35 });
-        io.observe(document.getElementById('resolve'));
-      } else { play(); }
-    })();
-  </script>
-
-  <!-- catalog engine: powers the Browse preview strip above (init no-ops without a #grid) -->
+  <!-- catalog engine provides DATA + HOPS for the Try Resolve widget (init no-ops without a #grid) -->
   <script src="explore.js"></script>
   <script>
-    if (window.Explore) window.Explore.renderPreview('#browsePreview', 3);
+    // section-highlight in the contents rail
+    (function () {
+      var links = Array.prototype.slice.call(document.querySelectorAll('.docnav a'));
+      var map = {};
+      links.forEach(function (a) {
+        var h = a.getAttribute('href');
+        if (h && h.charAt(0) === '#') map[h.slice(1)] = a;
+      });
+      var secs = Array.prototype.slice.call(document.querySelectorAll('.doc section'));
+      if (!('IntersectionObserver' in window) || !secs.length) return;
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          links.forEach(function (a) { a.classList.remove('current'); });
+          var cur = map[e.target.id];
+          if (cur) cur.classList.add('current');
+        });
+      }, { rootMargin: '-20% 0px -70% 0px' });
+      secs.forEach(function (s) { io.observe(s); });
+    })();
+
+    // interactive Try Resolve trace, driven by the index records
+    (function () {
+      if (!window.Explore || !window.Explore.DATA) return;
+      var DATA = window.Explore.DATA;
+      var sel = document.getElementById('rsvSelect');
+      var btn = document.getElementById('rsvBtn');
+      var trace = document.getElementById('rsvTrace');
+      if (!sel || !btn || !trace) return;
+
+      function esc(x) {
+        return String(x).replace(/[&<>"]/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+      }
+      DATA.forEach(function (r, i) {
+        var o = document.createElement('option');
+        o.value = i; o.textContent = r.name + '  ·  ' + r.identity;
+        sel.appendChild(o);
+      });
+      function steps(r) {
+        var role = (r.meta && r.meta['org.projectnanda.resolutionRole']) || (r.caps && r.caps[0]) || '';
+        var target = r.url ? r.url : (r.data ? JSON.stringify(r.data) : r.host);
+        return [
+          { t: 'NandaIndex', io: 'GET /resolve?identifier=' + r.identity },
+          { t: 'Discovery object', io: r.mediaType + (role ? '  ·  ' + role : '') + '  @  ' + r.host },
+          { t: 'Agent card', io: target },
+          { t: 'Runtime', io: (r.region && r.region !== 'n/a') ? r.region + ' runtime' : 'target runtime' },
+        ];
+      }
+      function render(r) {
+        var s = steps(r);
+        trace.innerHTML = s.map(function (h, i) {
+          var last = i === s.length - 1;
+          return '<li class="rsv-row" data-i="' + i + '"><div class="rsv-rail"><span class="rsv-n">' +
+            (i + 1) + '</span>' + (last ? '' : '<span class="rsv-line"></span>') + '</div>' +
+            '<div class="rsv-body"><div class="rsv-title">' + esc(h.t) + '</div>' +
+            '<div class="rsv-io">' + esc(h.io) + '</div></div></li>';
+        }).join('');
+      }
+      var timers = [];
+      function play() {
+        timers.forEach(clearTimeout); timers = [];
+        var rows = Array.prototype.slice.call(trace.querySelectorAll('.rsv-row'));
+        rows.forEach(function (el) { el.classList.remove('lit'); });
+        rows.forEach(function (el, i) { timers.push(setTimeout(function () { el.classList.add('lit'); }, i * 420)); });
+      }
+      sel.addEventListener('change', function () { render(DATA[+sel.value || 0]); play(); });
+      btn.addEventListener('click', play);
+      render(DATA[0]);
+    })();
   </script>
 </body>
 </html>

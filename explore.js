@@ -1,4 +1,4 @@
-/* NANDA Index — Explore catalog engine.
+/* NANDA Index, Explore catalog engine.
    Vanilla JS. Pure data/logic is unit-tested under Node; DOM rendering and the
    resolution-path animation (added in later tasks) run only in a browser.
    Example identities are fictional; no real organisations or personal data. */
@@ -10,178 +10,222 @@
     window.matchMedia &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var CAT_KEYS = ['enterprise', 'dns', 'smb', 'personal', 'mcp', 'skill'];
+  var CAT_KEYS = ['catalog', 'dns-aid', 'card', 'directory', 'gateway', 'emerging'];
   var CAT_LABEL = {
-    enterprise: 'Enterprise',
-    dns: 'DNS-AID',
-    smb: 'SMBs',
-    personal: 'Personal',
-    mcp: 'MCPs',
-    skill: 'Skills',
+    catalog: 'AI Catalog',
+    'dns-aid': 'DNS-AID',
+    card: 'Hosted Card',
+    directory: 'Directory',
+    gateway: 'Gateway',
+    emerging: 'Telecom / IoT / Sovereign',
   };
 
   /* ---------------- the 4 resolution hops (ported from the Resolve trace) -------------- */
   var HOPS = [
-    { n: 1, title: 'NANDA Index', q: 'Who manages this identity?', api: 'GET /api/v1/resolve?locator=…' },
-    { n: 2, title: 'Agent Source', q: 'What is this agent’s entry?', api: 'GET <registry_url>/agents/<id>' },
-    { n: 3, title: 'Agent Card', q: 'What can this agent do?', api: 'GET <catalog_entry.url>' },
-    { n: 4, title: 'Talk with Agent', q: 'Send a task directly.', api: 'POST <agent_card.url>/run' },
+    { n: 1, title: 'NandaIndex', q: 'Map identity to discovery object.', api: 'GET /resolve?identifier=…' },
+    { n: 2, title: 'Discovery object', q: 'AI Catalog, DNS-AID, gateway, or hosted card.', api: 'GET <entry.url | data>' },
+    { n: 3, title: 'Agent Card', q: 'Endpoint and auth requirements.', api: 'GET <agent_card.url>' },
+    { n: 4, title: 'Runtime', q: 'Execute with required auth.', api: 'POST <runtime.url>' },
   ];
 
   var MEDIA = {
-    enterprise: 'application/ai-catalog+json',
-    dns: 'application/vnd.dns-aid+json',
-    smb: 'application/a2a-agent-card+json',
-    personal: 'application/a2a-agent-card+json',
-    mcp: 'application/mcp-server-card+json',
-    skill: 'application/agentskill+zip',
+    catalog: 'application/ai-catalog+json',
+    'dns-aid': 'application/vnd.dns-aid+json',
+    card: 'application/a2a-agent-card+json',
   };
 
-  /* ---------------- mock dataset (>=12 records across all six categories) -------------- */
+  // Technical sub-label for the left mechanism menu: the media type or role family each
+  // mechanism resolves to.
+  var MECH_HINT = {
+    catalog: 'application/ai-catalog+json',
+    'dns-aid': 'application/vnd.dns-aid+json',
+    card: 'application/a2a-agent-card+json',
+    directory: 'ADS · ARD · platform',
+    gateway: 'gateway · ans / did',
+    emerging: 'telecom · iot · sovereign',
+  };
+
+  /* ---------------- index records (NandaIndex entries)
+     Each entry is an AI Catalog Catalog Entry mapping a stable identity to the correct next
+     discovery object. The first four are the canonical entity types (enterprise AI Catalog,
+     enterprise DNS-AID, SMB hosted card, individual hosted card); the rest represent the
+     discovery mechanisms that bridge through the switchboard. -------------- */
   var DATA = [
     {
-      key: 'acme', mono: 'AC', name: 'Acme Time Services', cat: 'enterprise', verified: true, status: 'active',
-      identity: 'urn:ai:domain:acme.com:agent:time', domain: 'acme.com',
-      host: 'Self-hosted registry', region: 'US-East', ttl: 300, version: 'v1.4.0',
-      mediaType: MEDIA.enterprise, identityType: 'dns',
-      description: 'Authoritative time, timezone and scheduling agent. Resolves wall-clock and monotonic time across regions with signed responses.',
-      tags: ['time', 'scheduling', 'enterprise'],
-      agents: [{ name: 'time', role: 'scheduling' }, { name: 'billing-assistant', role: 'billing' }, { name: 'support-router', role: 'routing' }],
-      caps: ['urn:nanda:cap:scheduling', 'urn:nanda:cap:billing'],
-      created: '2026-03-02', updated: '2026-06-22',
+      key: 'example-com', mono: 'EX', name: 'example.com', cat: 'catalog', verified: true, status: 'active',
+      identity: 'urn:ai:domain:example.com', domain: 'example.com',
+      host: 'example.com /.well-known', region: 'n/a', ttl: 3600, version: 'n/a',
+      mediaType: MEDIA.catalog, identityType: 'dns',
+      url: 'https://example.com/.well-known/ai-catalog.json',
+      meta: {
+        'org.projectnanda.resolutionRole': 'nested-ai-catalog',
+        'org.projectnanda.nandaIndexRole': 'optional-fallback-entry',
+      },
+      description: 'Enterprise, pure AI Catalog. Published at https://example.com/.well-known/ai-catalog.json and fetched directly; NandaIndex is not in the critical path. The entry is optional, useful for fallback, federation visibility, and anti-squatting.',
+      tags: ['ai-catalog', 'well-known', 'enterprise'],
+      agents: [{ name: 'ai-catalog', role: 'nested-ai-catalog' }],
+      caps: ['nested-ai-catalog'],
+      created: '2026-05-01', updated: '2026-06-22',
     },
     {
-      key: 'globex', mono: 'GX', name: 'Globex', cat: 'enterprise', verified: true, status: 'active',
-      identity: 'urn:ai:domain:globex.example', domain: 'globex.example',
-      host: 'Self-hosted registry', region: 'EU-West', ttl: 300, version: 'v2.1.0',
-      mediaType: MEDIA.enterprise, identityType: 'dns',
-      description: 'Industrial operations catalog exposing IT-ops and data-broker agents through a self-hosted registry.',
-      tags: ['it-ops', 'data', 'enterprise'],
-      agents: [{ name: 'ops-bot', role: 'it-ops' }, { name: 'data-broker', role: 'data' }],
-      caps: ['urn:nanda:cap:itops'],
-      created: '2026-02-11', updated: '2026-06-18',
-    },
-    {
-      key: 'jpmorgan', mono: 'JP', name: 'JPMorgan', cat: 'enterprise', verified: true, status: 'active',
-      identity: 'urn:ai:domain:jpmorgan.com', domain: 'jpmorgan.com',
-      host: 'Self-hosted registry', region: 'US-East', ttl: 300, version: 'v3.0.1',
-      mediaType: MEDIA.enterprise, identityType: 'dns',
-      description: 'Enterprise financial-services catalog: market-data, settlement and compliance agents behind a private registry.',
-      tags: ['finance', 'compliance', 'enterprise'],
-      agents: [{ name: 'market-data', role: 'data' }, { name: 'settlement', role: 'ops' }, { name: 'compliance', role: 'risk' }],
-      caps: ['urn:nanda:cap:finance', 'urn:nanda:cap:compliance'],
-      created: '2026-01-20', updated: '2026-06-20',
-    },
-    {
-      key: 'dell', mono: 'DT', name: 'Dell Technologies', cat: 'enterprise', verified: true, status: 'active',
-      identity: 'urn:ai:domain:dell.com', domain: 'dell.com',
-      host: 'Self-hosted registry', region: 'US-Central', ttl: 300, version: 'v1.0.0',
-      mediaType: MEDIA.enterprise, identityType: 'dns',
-      description: 'Hardware and support catalog exposing provisioning and warranty agents to enterprise customers.',
-      tags: ['hardware', 'support', 'enterprise'],
-      agents: [{ name: 'provisioning', role: 'ops' }, { name: 'warranty', role: 'support' }],
-      caps: ['urn:nanda:cap:support'],
-      created: '2026-04-01', updated: '2026-06-12',
-    },
-    {
-      key: 'skyblue', mono: 'SB', name: 'SkyBlue Airlines', cat: 'dns', verified: true, status: 'active',
+      key: 'skyblue-refunds', mono: 'SB', name: 'skyblue.com · refunds', cat: 'dns-aid', verified: true, status: 'active',
       identity: 'urn:ai:domain:skyblue.com:agent:refunds', domain: 'skyblue.com',
-      host: 'DNS-AID (TXT records)', region: 'EU-West', ttl: 600, version: 'v1.2.0',
-      mediaType: MEDIA.dns, identityType: 'dns',
-      description: 'Travel agents published through DNS-AID TXT records: refunds, flight status and rebooking resolve directly from DNS.',
-      tags: ['travel', 'dns-aid'],
-      agents: [{ name: 'refunds', role: 'travel' }, { name: 'flight-status', role: 'travel' }, { name: 'rebooking', role: 'travel' }],
-      caps: ['urn:nanda:cap:travel'],
-      created: '2026-03-15', updated: '2026-06-19',
+      host: 'skyblue.com DNS', region: 'n/a', ttl: 600, version: 'n/a',
+      mediaType: MEDIA['dns-aid'], identityType: 'dns',
+      data: { method: 'dns-aid', agentDiscoveryName: 'refunds._agents.skyblue.com' },
+      meta: {
+        'org.projectnanda.resolutionRole': 'dns-aid-pointer',
+        'org.projectnanda.authoritativeSystem': 'skyblue.com DNS',
+      },
+      description: 'Enterprise on DNS-AID at refunds._agents.skyblue.com. The entry carries inline routing data rather than a URL. NandaIndex makes the DNS-AID path reachable from the switchboard without replacing it.',
+      tags: ['dns-aid', 'travel', 'refunds'],
+      agents: [{ name: 'refunds', role: 'dns-aid-pointer' }],
+      caps: ['dns-aid-pointer'],
+      created: '2026-04-18', updated: '2026-06-19',
     },
     {
-      key: 'initech', mono: 'IT', name: 'Initech', cat: 'dns', verified: true, status: 'active',
-      identity: 'urn:ai:domain:initech.example:agent:support', domain: 'initech.example',
-      host: 'DNS-AID (TXT records)', region: 'US-Central', ttl: 600, version: 'v0.8.0',
-      mediaType: MEDIA.dns, identityType: 'dns',
-      description: 'Support agent discoverable via DNS-AID, updated instantly through DNS without a hosted registry.',
-      tags: ['support', 'dns-aid'],
-      agents: [{ name: 'support', role: 'support' }],
-      caps: ['urn:nanda:cap:support'],
-      created: '2026-02-28', updated: '2026-06-05',
+      key: 'moonbakery-orders', mono: 'MB', name: 'moonbakery.com · orders', cat: 'card', verified: true, status: 'active',
+      identity: 'urn:ai:domain:moonbakery.com:agent:orders', domain: 'moonbakery.com',
+      host: 'host39.org', region: 'AWS', ttl: 900, version: 'n/a',
+      mediaType: MEDIA.card, identityType: 'dns',
+      url: 'https://agentcards.host39.org/moonbakery.com/orders.json',
+      meta: {
+        'org.projectnanda.agentCardHost': 'host39.org',
+        'org.projectnanda.runtime.provider': 'AWS',
+        'org.projectnanda.auth.execution': 'payment_or_session_token_required',
+      },
+      description: 'SMB hosted card. Owns moonbakery.com but runs no enterprise infrastructure. Runtime, agent card, and domain sit with three separate providers, a demonstration of permissionless deployment: no enterprise gateway, no DNS certificate.',
+      tags: ['smb', 'a2a-card', 'orders'],
+      agents: [{ name: 'orders', role: 'hosted-agent-card' }],
+      caps: ['hosted-agent-card'],
+      created: '2026-05-20', updated: '2026-06-24',
     },
     {
-      key: 'moonbakery', mono: 'MB', name: 'Moon Bakery', cat: 'smb', verified: true, status: 'active',
-      identity: 'urn:ai:domain:moonbakery39.com:agent:orders', domain: 'moonbakery39.com',
-      host: 'host39.org', region: 'US-West', ttl: 900, version: 'v1.0.0',
-      mediaType: MEDIA.smb, identityType: 'dns',
-      description: 'Small-business orders agent. Owns a domain but no backend — the A2A agent card is hosted on host39.org.',
-      tags: ['commerce', 'smb'],
-      agents: [{ name: 'orders', role: 'commerce' }],
-      caps: ['urn:nanda:cap:commerce'],
-      created: '2026-05-02', updated: '2026-06-21',
-    },
-    {
-      key: 'postgres-mcp', mono: 'PG', name: 'Postgres MCP', cat: 'mcp', verified: true, status: 'active',
-      identity: 'urn:ai:domain:supabase.io:mcp:postgres', domain: 'supabase.io',
-      host: 'Self-hosted registry', region: 'US-West', ttl: 600, version: 'v0.9.2',
-      mediaType: MEDIA.mcp, identityType: 'dns',
-      description: 'Model Context Protocol server exposing read/write Postgres tools with row-level security and schema introspection.',
-      tags: ['database', 'sql', 'tools'],
-      agents: [{ name: 'postgres', role: 'database' }],
-      caps: ['urn:nanda:cap:database'],
-      created: '2026-05-18', updated: '2026-06-24',
-    },
-    {
-      key: 'synergetics', mono: 'SY', name: 'Synergetics AI', cat: 'mcp', verified: true, status: 'active',
-      identity: 'urn:ai:domain:synergetics.ai:mcp:tools', domain: 'synergetics.ai',
-      host: 'Self-hosted registry', region: 'US-West', ttl: 600, version: 'v0.5.0',
-      mediaType: MEDIA.mcp, identityType: 'dns',
-      description: 'MCP toolbox bundling search, retrieval and summarisation tools for agent runtimes.',
-      tags: ['mcp', 'tools', 'retrieval'],
-      agents: [{ name: 'toolbox', role: 'tools' }],
-      caps: ['urn:nanda:cap:tools'],
-      created: '2026-05-25', updated: '2026-06-15',
-    },
-    {
-      key: 'cmu-skill', mono: 'CM', name: 'CMU Research', cat: 'skill', verified: false, status: 'pending',
-      identity: 'urn:ai:domain:cmu.edu:skill:research', domain: 'cmu.edu',
-      host: 'host39.org', region: 'US-East', ttl: 900, version: 'v0.2.0',
-      mediaType: MEDIA.skill, identityType: 'dns',
-      description: 'Packaged agent-skill bundle for literature search and citation extraction, distributed as a signed zip.',
-      tags: ['research', 'skill'],
-      agents: [{ name: 'lit-search', role: 'research' }],
-      caps: ['urn:nanda:cap:research'],
-      created: '2026-06-08', updated: '2026-06-23',
-    },
-    {
-      key: 'personal', mono: 'AX', name: 'Alex’s Assistant', cat: 'personal', verified: false, status: 'pending',
-      identity: 'urn:ai:email:alex@example.com', domain: null,
-      host: 'host39.org', region: '—', ttl: 900, version: 'v0.3.0',
-      mediaType: MEDIA.personal, identityType: 'email',
-      description: 'Personal email-identity agent. No domain needed — the email address is the agent identity, card hosted on host39.org.',
-      tags: ['personal-agent', 'email-identity'],
-      agents: [{ name: 'assistant', role: 'personal' }],
-      caps: ['urn:nanda:cap:personal'],
-      created: '2026-06-01', updated: '2026-06-25',
-    },
-    {
-      key: 'jrivera', mono: 'JR', name: 'John Rivera', cat: 'personal', verified: false, status: 'pending',
+      key: 'john-hotmail', mono: 'JH', name: 'john@hotmail.com', cat: 'card', verified: false, status: 'pending',
       identity: 'urn:ai:email:john@hotmail.com', domain: null,
-      host: 'host39.org', region: '—', ttl: 900, version: 'v0.1.0',
-      mediaType: MEDIA.personal, identityType: 'email',
-      description: 'Personal inbox-triage and reply-drafting agent with email-identity and delegated card hosting via NANDA.',
-      tags: ['personal-agent', 'email-identity'],
-      agents: [{ name: 'inbox', role: 'personal' }],
-      caps: ['urn:nanda:cap:personal'],
-      created: '2026-06-10', updated: '2026-06-24',
+      host: 'host39.org', region: 'Azure', ttl: 900, version: 'n/a',
+      mediaType: MEDIA.card, identityType: 'email',
+      url: 'https://agentcards.host39.org/personal/john%40hotmail.com/card.json',
+      meta: {
+        'org.projectnanda.resolutionRole': 'personal-agent-card',
+        'org.projectnanda.auth.metadata': 'public_minimal',
+        'org.projectnanda.auth.execution': 'user_consent_required',
+      },
+      description: 'Individual with no domain. The email address is the stable identity. Runtime on Azure, agent card on a third-party host; no domain ownership required.',
+      tags: ['individual', 'a2a-card', 'personal'],
+      agents: [{ name: 'card', role: 'personal-agent-card' }],
+      caps: ['personal-agent-card'],
+      created: '2026-06-02', updated: '2026-06-25',
+    },
+    {
+      key: 'agntcy-ads', mono: 'AG', name: 'AGNTCY Agent Directory (ADS)', cat: 'directory', verified: true, status: 'active',
+      identity: 'urn:ai:system:agntcy:agent-directory', domain: null,
+      host: 'AGNTCY ADS', region: 'DHT', ttl: 3600, version: 'n/a',
+      mediaType: MEDIA.catalog, identityType: 'system',
+      meta: {
+        'org.projectnanda.resolutionRole': 'agntcy-ads',
+        'org.projectnanda.addressing': 'oci-aligned',
+        'org.projectnanda.integrity': 'sigstore',
+      },
+      description: 'Decentralized DHT routing; OCI storage; verifiable integrity. The backend registry uses IPFS Kademlia DHT for decentralized routing, OCI-aligned content addressing for immutable storage, and Sigstore-backed integrity verification.',
+      tags: ['agntcy', 'dht', 'oci'],
+      agents: [{ name: 'agent-directory', role: 'agntcy-ads' }],
+      caps: ['agntcy-ads'],
+      created: '2026-03-10', updated: '2026-06-17',
+    },
+    {
+      key: 'ard-finder', mono: 'AR', name: 'ARD finder API', cat: 'directory', verified: true, status: 'active',
+      identity: 'urn:ai:system:ard:finder', domain: null,
+      host: 'ARD read-only API', region: 'n/a', ttl: 3600, version: 'n/a',
+      mediaType: MEDIA.catalog, identityType: 'system',
+      meta: { 'org.projectnanda.resolutionRole': 'ard' },
+      description: 'Read-only standard finder API across conforming registries. Allows external agents to search the directory through the same interface used with other ARD-conforming systems (Hugging Face, GitHub).',
+      tags: ['ard', 'finder-api'],
+      agents: [{ name: 'finder', role: 'ard' }],
+      caps: ['ard'],
+      created: '2026-03-22', updated: '2026-06-11',
+    },
+    {
+      key: 'platform-registry', mono: 'PR', name: 'Platform Registry', cat: 'directory', verified: true, status: 'active',
+      identity: 'urn:ai:system:platform:registry', domain: null,
+      host: 'Platform registry', region: 'n/a', ttl: 3600, version: 'n/a',
+      mediaType: MEDIA.catalog, identityType: 'system',
+      meta: { 'org.projectnanda.resolutionRole': 'platform-registry' },
+      description: 'Onboarding, hosting, billing, developer experience. Bridged for cross-platform and cross-community discovery.',
+      tags: ['platform', 'registry'],
+      agents: [{ name: 'registry', role: 'platform-registry' }],
+      caps: ['platform-registry'],
+      created: '2026-04-05', updated: '2026-06-09',
+    },
+    {
+      key: 'enterprise-gateway', mono: 'GW', name: 'Enterprise Gateway', cat: 'gateway', verified: true, status: 'active',
+      identity: 'urn:ai:system:gateway:enterprise', domain: null,
+      host: 'Enterprise gateway', region: 'n/a', ttl: 600, version: 'n/a',
+      mediaType: MEDIA.catalog, identityType: 'system',
+      meta: { 'org.projectnanda.resolutionRole': 'gateway' },
+      description: 'Access control, privacy, throttling, compliance. Bridged for discovery of agents not behind that gateway.',
+      tags: ['gateway', 'access-control', 'compliance'],
+      agents: [{ name: 'gateway', role: 'gateway' }],
+      caps: ['gateway'],
+      created: '2026-04-12', updated: '2026-06-14',
+    },
+    {
+      key: 'ans-did', mono: 'AN', name: 'ANS / DIDs', cat: 'gateway', verified: true, status: 'active',
+      identity: 'urn:ai:system:ans:did', domain: null,
+      host: 'ANS / DID resolver', region: 'n/a', ttl: 3600, version: 'n/a',
+      mediaType: MEDIA.catalog, identityType: 'system',
+      meta: { 'org.projectnanda.resolutionRole': 'ans-did' },
+      description: 'Identity and ownership proof. Bridged for resource indexing and routing.',
+      tags: ['ans', 'did', 'identity'],
+      agents: [{ name: 'ans', role: 'ans-did' }],
+      caps: ['ans-did'],
+      created: '2026-04-20', updated: '2026-06-08',
+    },
+    {
+      key: 'telecom-registry', mono: 'TE', name: 'Telecom Registry', cat: 'emerging', verified: false, status: 'pending',
+      identity: 'urn:ai:system:telecom:registry', domain: null,
+      host: 'Carrier registry', region: 'n/a', ttl: 3600, version: 'n/a',
+      mediaType: MEDIA.catalog, identityType: 'system',
+      meta: { 'org.projectnanda.resolutionRole': 'telecom-registry' },
+      description: 'Telecom registries will integrate agents into carrier infrastructure. Sector-specific governance and carrier integration, bridged into the global index.',
+      tags: ['telecom', 'carrier'],
+      agents: [{ name: 'carrier-registry', role: 'telecom-registry' }],
+      caps: ['telecom-registry'],
+      created: '2026-06-01', updated: '2026-06-06',
+    },
+    {
+      key: 'iot-edgeai', mono: 'IO', name: 'IoT / EdgeAI Registry', cat: 'emerging', verified: false, status: 'pending',
+      identity: 'urn:ai:system:iot:edgeai', domain: null,
+      host: 'IoT / EdgeAI registry', region: 'n/a', ttl: 3600, version: 'n/a',
+      mediaType: MEDIA.catalog, identityType: 'system',
+      meta: { 'org.projectnanda.resolutionRole': 'iot-registry' },
+      description: 'IoT and EdgeAI systems will develop their own lightweight discovery mechanisms. Bridged into the global index through a single entry.',
+      tags: ['iot', 'edgeai'],
+      agents: [{ name: 'edge-registry', role: 'iot-registry' }],
+      caps: ['iot-registry'],
+      created: '2026-06-03', updated: '2026-06-07',
+    },
+    {
+      key: 'sovereign-directory', mono: 'SO', name: 'Sovereign National Directory', cat: 'emerging', verified: false, status: 'pending',
+      identity: 'urn:ai:system:sovereign:national-directory', domain: null,
+      host: 'National directory', region: 'n/a', ttl: 3600, version: 'n/a',
+      mediaType: MEDIA.catalog, identityType: 'system',
+      meta: { 'org.projectnanda.resolutionRole': 'sovereign-registry' },
+      description: 'Sovereign national directories will be required by some governments. Sector-specific governance and national compliance, bridged into the global index.',
+      tags: ['sovereign', 'national', 'compliance'],
+      agents: [{ name: 'national-directory', role: 'sovereign-registry' }],
+      caps: ['sovereign-registry'],
+      created: '2026-06-04', updated: '2026-06-05',
     },
   ];
-
   /* ---------------- pure logic ---------------- */
   function categoryOf(record) {
     if (record && CAT_KEYS.indexOf(record.cat) !== -1) return record.cat;
-    // Fallback (v2 parity): derive from media_type when cat is absent.
+    // Fallback: derive from media_type when cat is absent.
     var mt = (record && (record.mediaType || record.media_type)) || '';
-    if (mt === MEDIA.mcp) return 'mcp';
-    if (mt === MEDIA.skill) return 'skill';
-    if (mt === MEDIA.dns) return 'dns';
-    if (mt === MEDIA.enterprise) return 'enterprise';
+    if (mt === MEDIA['dns-aid']) return 'dns-aid';
+    if (mt === MEDIA.card) return 'card';
+    if (mt === MEDIA.catalog) return 'catalog';
     return null;
   }
 
@@ -214,25 +258,11 @@
   }
 
   function toJSON(record) {
-    // identifier FIRST — the AI-Catalog resolution record (paper §5).
-    var rec = {
-      identifier: record.identity,
-      displayName: record.name,
-      mediaType: record.mediaType,
-      ttl_seconds: record.ttl,
-      status: record.status,
-      email_verified: !!record.verified,
-      publisher: {
-        identifier: record.identity.split(':agent:')[0],
-        displayName: record.name,
-        identityType: record.identityType,
-      },
-      tags: record.tags,
-      metadata: {
-        'org.projectnanda.region': record.region,
-        'org.projectnanda.host': record.host,
-      },
-    };
+    // The AI Catalog Catalog Entry: identifier maps to a discovery object.
+    var rec = { identifier: record.identity, mediaType: record.mediaType };
+    if (record.url) rec.url = record.url;
+    if (record.data) rec.data = record.data;
+    rec.metadata = record.meta || {};
     return JSON.stringify(rec, null, 2);
   }
 
@@ -241,18 +271,21 @@
     lines.push('# ' + record.name);
     lines.push('');
     lines.push('- **Identifier:** `' + record.identity + '`');
-    lines.push('- **Category:** ' + (CAT_LABEL[record.cat] || record.cat));
+    lines.push('- **Mechanism:** ' + (CAT_LABEL[record.cat] || record.cat));
     lines.push('- **Media type:** `' + record.mediaType + '`');
-    lines.push('- **Version:** ' + record.version);
+    lines.push('- **Identity type:** ' + record.identityType);
     lines.push('- **Verified:** ' + (record.verified ? 'yes' : 'no') + ' · **Status:** ' + record.status);
-    lines.push('- **Hosting:** ' + record.host + ' · **Region:** ' + record.region);
+    lines.push('- **Target host:** ' + record.host + ' · **Runtime / region:** ' + record.region);
     lines.push('- **TTL:** ' + record.ttl + 's · **Updated:** ' + record.updated);
     lines.push('');
     lines.push(record.description);
     lines.push('');
-    lines.push('**Agents:** ' + record.agents.map(function (a) { return a.name; }).join(', '));
-    lines.push('**Capabilities:** ' + record.caps.join(', '));
-    lines.push('**Tags:** ' + record.tags.join(', '));
+    lines.push('- **Target object:** ' + record.agents.map(function (a) { return a.name; }).join(', '));
+    lines.push('- **Resolution role:** ' + record.caps.join(', '));
+    if (record.meta) {
+      Object.keys(record.meta).forEach(function (k) { lines.push('- **' + k + ':** ' + record.meta[k]); });
+    }
+    lines.push('- **Tags:** ' + record.tags.join(', '));
     return lines.join('\n');
   }
 
@@ -277,11 +310,9 @@
 
   function protoOf(r) {
     var mt = r.mediaType || '';
-    if (mt === MEDIA.mcp) return 'mcp';
-    if (mt === MEDIA.skill) return 'skill';
-    if (mt === MEDIA.dns) return 'dns-aid';
-    if (mt.indexOf('a2a') !== -1) return 'a2a';
-    return 'catalog';
+    if (mt === MEDIA['dns-aid']) return 'dns-aid';
+    if (mt.indexOf('a2a') !== -1) return 'a2a-card';
+    return 'ai-catalog';
   }
   function fmtDate(s) {
     var d = new Date(s);
@@ -297,7 +328,7 @@
       return '<span class="chip">' + esc(t) + '</span>';
     }).join('');
     return (
-      '<article class="card" data-key="' + esc(r.key) + '" role="button" tabindex="0" aria-label="' + esc(r.name) + ' — open record">' +
+      '<article class="card" data-key="' + esc(r.key) + '" role="button" tabindex="0" aria-label="' + esc(r.name) + ', open record">' +
       '<div class="card-head"><div class="title-line"><h3>' + esc(r.name) + '</h3>' + vmark + '</div>' +
       '<span class="cat-pill" data-cat="' + esc(r.cat) + '">' + esc(CAT_LABEL[r.cat]) + '</span></div>' +
       '<div class="identifier">' + esc(r.identity) + '</div>' +
@@ -320,12 +351,18 @@
   function renderMenu() {
     var host = $('#catMenu');
     if (!host) return;
+    var counts = {};
+    CAT_KEYS.forEach(function (k) { counts[k] = 0; });
+    DATA.forEach(function (r) { if (counts[r.cat] != null) counts[r.cat]++; });
     var boxes = CAT_KEYS.map(function (k) {
       return '<label class="cat-check"><input type="checkbox" data-cat="' + k + '"' +
-        (state.cats.has(k) ? ' checked' : '') + ' /><span>' + esc(CAT_LABEL[k]) + '</span></label>';
+        (state.cats.has(k) ? ' checked' : '') + ' />' +
+        '<span class="cc-main"><span class="cc-label">' + esc(CAT_LABEL[k]) + '</span>' +
+        '<span class="cc-sub">' + esc(MECH_HINT[k] || '') + '</span></span>' +
+        '<span class="cc-count">' + counts[k] + '</span></label>';
     }).join('');
     host.innerHTML =
-      '<p class="cat-title">Category</p>' + boxes +
+      '<p class="cat-title">Discovery mechanism</p>' + boxes +
       (state.cats.size ? '<button class="cat-clear" type="button">Clear filters</button>' : '');
     Array.prototype.forEach.call(host.querySelectorAll('input[data-cat]'), function (box) {
       box.addEventListener('change', function () {
@@ -437,7 +474,7 @@
     var vmark = r.verified ? ICON.verified : '';
     var chips = r.tags.slice(0, 3).map(function (t) { return '<span class="chip">' + esc(t) + '</span>'; }).join('');
     return (
-      '<a class="card card-preview" href="explore.html" aria-label="' + esc(r.name) + ' — browse the index">' +
+      '<a class="card card-preview" href="explore.html" aria-label="' + esc(r.name) + ', browse the index">' +
       '<div class="card-head"><div class="title-line"><h3>' + esc(r.name) + '</h3>' + vmark + '</div>' +
       '<span class="cat-pill" data-cat="' + esc(r.cat) + '">' + esc(CAT_LABEL[r.cat]) + '</span></div>' +
       '<div class="identifier">' + esc(r.identity) + '</div>' +
@@ -459,15 +496,23 @@
     var panel = $('#slidePanel'), scrim = $('#scrim');
 
     var vmark = r.verified ? ICON.verified : '';
-    var emailBadge = r.verified
-      ? '<span class="vbadge ok">✓ Email verified</span>'
-      : '<span class="vbadge pending">◷ Email unverified</span>';
+    var verBadge = r.verified
+      ? '<span class="vbadge ok">✓ Verified</span>'
+      : '<span class="vbadge pending">◷ Unverified</span>';
     var chips = r.tags.map(function (t) { return '<span class="chip">' + esc(t) + '</span>'; }).join('');
-    var agents = r.agents.map(function (a) {
-      return '<div class="sp-agent"><span class="an">' + esc(a.name) + '</span><span class="al">live</span></div>';
+    var role = (r.meta && r.meta['org.projectnanda.resolutionRole']) || r.caps[0] || '';
+    var target = r.agents.map(function (a) {
+      return '<div class="sp-agent"><span class="an">' + esc(a.name) + '</span><span class="al">' + esc(a.role || '') + '</span></div>';
     }).join('');
-    var caps = r.caps.map(function (c) { return '<span class="sp-cap">' + esc(c) + '</span>'; }).join('');
-    var pq = ['locator: ' + r.identity, r.host, 'card · ' + r.agents[0].name, 'live runtime endpoint'];
+    var metaRows = r.meta ? Object.keys(r.meta).map(function (k) {
+      return '<dt class="mono">' + esc(k.replace('org.projectnanda.', '')) + '</dt><dd class="mono">' + esc(r.meta[k]) + '</dd>';
+    }).join('') : '';
+    var pq = [
+      'identifier: ' + r.identity,
+      r.host,
+      role ? 'role: ' + role : 'discovery object',
+      (r.region && r.region !== 'n/a') ? r.region + ' runtime' : 'target runtime',
+    ];
     var ptrace = HOPS.map(function (h, i) {
       var last = i === HOPS.length - 1;
       return '<div class="pt-row" data-pt="' + h.n + '">' +
@@ -478,7 +523,7 @@
     }).join('');
 
     panel.innerHTML =
-      '<div class="sp-head"><div><span class="sp-kicker">Index record</span>' +
+      '<div class="sp-head"><div><span class="sp-kicker">NandaIndex entry</span>' +
       '<div class="sp-title"><h2>' + esc(r.name) + '</h2>' + vmark +
       '<span class="cat-pill" data-cat="' + esc(r.cat) + '">' + esc(CAT_LABEL[r.cat]) + '</span></div>' +
       '<div class="sp-idn">' + esc(r.identity) + '</div></div>' +
@@ -488,16 +533,15 @@
       '<section>' + (r.domain ? '<p class="sp-domain">' + esc(r.domain) + '</p>' : '') +
       '<p class="sp-desc">' + esc(r.description) + '</p>' +
       '<div class="chips" style="margin-top:12px;">' + chips + '</div></section>' +
-      '<section><p class="sp-label">Verification</p><div class="sp-vrow">' + emailBadge + statusBadge(r) + '</div></section>' +
-      '<section><p class="sp-label">Indexed agents</p><div class="sp-agents">' + agents + '</div></section>' +
-      '<section><p class="sp-label">Capabilities</p><div class="sp-caps">' + caps + '</div></section>' +
+      '<section><p class="sp-label">Status</p><div class="sp-vrow">' + verBadge + statusBadge(r) + '</div></section>' +
+      '<section><p class="sp-label">Target object</p><div class="sp-agents">' + target + '</div></section>' +
+      (metaRows ? '<section><p class="sp-label">Routing metadata</p><dl class="sp-meta">' + metaRows + '</dl></section>' : '') +
       '<section><p class="sp-label">Record</p><dl class="sp-meta">' +
       '<dt>Media type</dt><dd class="mono">' + esc(r.mediaType) + '</dd>' +
-      '<dt>Hosting</dt><dd>' + esc(r.host) + '</dd>' +
-      '<dt>Region</dt><dd>' + esc(r.region) + '</dd>' +
-      '<dt>Version</dt><dd>' + esc(r.version) + '</dd>' +
+      '<dt>Identity type</dt><dd>' + esc(r.identityType) + '</dd>' +
+      '<dt>Target host</dt><dd>' + esc(r.host) + '</dd>' +
+      '<dt>Runtime / region</dt><dd>' + esc(r.region) + '</dd>' +
       '<dt>TTL</dt><dd>' + esc(r.ttl) + 's</dd>' +
-      '<dt>Created</dt><dd>' + esc(fmtDate(r.created)) + '</dd>' +
       '<dt>Updated</dt><dd>' + esc(fmtDate(r.updated)) + '</dd></dl></section>' +
       '<section><div class="sp-trace-head"><p class="sp-label" style="margin:0;">Resolution path</p>' +
       '<button class="btn" id="spReplay" type="button">▶ Replay trace</button></div>' + ptrace + '</section>' +
@@ -505,7 +549,7 @@
       '<button class="ebtn primary" id="spJson">' + ICON.json + 'Download JSON</button>' +
       '<button class="ebtn" id="spMd">' + ICON.md + 'Download Markdown</button>' +
       '<button class="ebtn" id="spCopy">' + ICON.copy + 'Copy identifier</button></div></section>' +
-      '<a class="btn primary sp-cta" href="#" id="spOpen">Open agent card →</a>' +
+      '<a class="btn primary sp-cta" href="#" id="spOpen">Open discovery object →</a>' +
       '<section class="sp-json"><div class="sp-json-head"><p class="sp-label" style="margin:0;">Raw record</p>' +
       '<button class="sp-copy" id="spRawCopy">Copy</button></div>' +
       '<pre class="codeblock">' + esc(toJSON(r)) + '</pre></section>' +

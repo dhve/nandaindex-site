@@ -3,35 +3,33 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Browse · NANDA Index</title>
-  <meta name="description" content="Browse the NANDA Index: a secure directory of verified agent registries. Filter by category and inspect any record's full resolution path." />
-  <link rel="stylesheet" href="styles.css?v=6" />
+  <title>Index records · NandaIndex</title>
+  <meta name="description" content="NandaIndex entries: AI Catalog Catalog Entries mapping a stable identity to the correct discovery object. Filter by discovery mechanism and inspect any entry's resolution path." />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body>
 
   <!-- ============ TOPBAR ============ -->
   <header class="topbar">
     <div class="brand">
-      <a href="index.html" class="brand-link"><strong>NANDA</strong> Index</a>
-      <span class="tag">Working draft v0.3 · Project NANDA</span>
+      <a href="index.html" class="brand-link"><strong>Nanda</strong>Index</a>
+      <span class="tag">Working draft</span>
     </div>
     <nav class="navlinks">
-      <a href="index.html#why">Why</a>
-      <a href="index.html#what">What</a>
-      <a href="index.html#how">How it works</a>
-      <a href="index.html#resolve">Resolve</a>
-      <a href="explore.html" class="active">Explore</a>
+      <a href="explore.html" class="active">Browse</a>
       <a href="faq.html">FAQ</a>
+      <a href="glossary.html">Glossary</a>
     </nav>
   </header>
 
   <main class="explore">
     <header class="explore-head">
-      <p class="eyebrow">Explore</p>
-      <h1>Browse the NANDA Index</h1>
+      <p class="eyebrow">NandaIndex entries</p>
+      <h1>Index records</h1>
       <p class="lede">
-        A secure directory of verified agent registries. Filter by category and select
-        any entry to inspect its full record and resolution path.
+        An AI Catalog-formatted database of index records. Each entry is an AI Catalog Catalog Entry
+        mapping a stable identity to the correct next discovery object. Filter by mechanism and select
+        any entry to inspect its record and resolution path.
       </p>
     </header>
 
@@ -62,13 +60,31 @@
   </main>
 
   <!-- ============ FOOTER ============ -->
-  <footer class="bottom">
-    <span>Project NANDA · MIT Media Lab. For research and discussion. v0.3, request for comments.</span>
-    <span class="fl">
-      <a href="faq.html">FAQ</a>
-      <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Beyond DNS</a>
-      <a href="https://projectnanda.org" target="_blank" rel="noopener">projectnanda.org</a>
-    </span>
+  <footer class="site-footer">
+    <div class="foot-cols">
+      <div class="foot-col">
+        <p class="foot-h">NandaIndex</p>
+        <a href="index.html#intro">Introduction</a>
+        <a href="index.html#what">What is NANDA Index</a>
+        <a href="index.html#resolve">Try Resolve</a>
+        <a href="explore.html">Browse index records</a>
+      </div>
+      <div class="foot-col">
+        <p class="foot-h">Reference</p>
+        <a href="faq.html">FAQ</a>
+        <a href="glossary.html">Glossary</a>
+      </div>
+      <div class="foot-col">
+        <p class="foot-h">Background</p>
+        <a href="https://outshift.cisco.com/blog/ai-ml/outshift-mit-agentic-web" target="_blank" rel="noopener">Switchboard (Cisco x MIT)</a>
+        <a href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">Beyond DNS</a>
+        <a href="https://projectnanda.org" target="_blank" rel="noopener">Project NANDA</a>
+      </div>
+    </div>
+    <div class="foot-base">
+      <span>NandaIndex Federated Resolution Architecture. For research and discussion. Working draft.</span>
+      <a href="#" class="foot-top">Back to top ↑</a>
+    </div>
   </footer>
 
   <!-- ============ SLIDE-OUT DETAIL PANEL ============ -->
