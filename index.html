@@ -52,7 +52,7 @@
           <li><a href="#resolve">Try Resolve</a></li>
           <li><a href="faq.html">FAQ</a></li>
           <li><a href="glossary.html">Glossary</a></li>
-          <li><a href="#references">References</a></li>
+          <li><a href="#references">Further reading</a></li>
         </ol>
       </aside>
 
@@ -138,8 +138,8 @@
           <p>
             When an enterprise publishes AI Catalog at a well-known endpoint and owns the domain, direct
             resolution already works. Any requester fetches the catalog directly, and a NandaIndex entry
-            is optional. It remains useful for fallback, federation visibility, migration, and
-            anti-squatting, but it is not required. NandaIndex adds value at the edges: actors that
+            is optional. It remains useful for fallback and federation visibility, but it is not
+            required. NandaIndex adds value at the edges: actors that
             cannot publish a well-known catalog, discovery systems that are not AI Catalog-compatible,
             and federation across registries.
           </p>
@@ -153,11 +153,11 @@
               <tbody>
                 <tr><th>AI Catalog</th><td>Rich enterprise resource indexing; typed, nestable, multi-artifact</td><td>Entities without domain names; cross-system linking</td></tr>
                 <tr><th>DNS-AID</th><td>Domain-controlled, fast, cacheable enterprise resolution, published under <code>_agents.&lt;domain&gt;</code> (for example <code>refunds._agents.skyblue.com</code>)</td><td>SMBs, individuals, non-DNS systems</td></tr>
-                <tr><th>AGNTCY ADS</th><td>Decentralized DHT routing; OCI storage; verifiable integrity</td><td>Linking into catalog-based or index-based lookups</td></tr>
-                <tr><th>Gateways</th><td>Access control, privacy, throttling, compliance</td><td>Discovery of agents not behind that gateway</td></tr>
-                <tr><th>ANS / DIDs</th><td>Identity and ownership proof</td><td>Resource indexing, routing</td></tr>
+                <tr><th>AGNTCY ADS</th><td>Content-addressed storage; DHT-based routing; cryptographic signing and verification</td><td>Linking into catalog-based or index-based lookups</td></tr>
+                <tr><th>Gateways</th><td>Authentication, authorization, rate limiting, and policy</td><td>Discovery of agents not behind that gateway</td></tr>
+                <tr><th>ANS / DIDs</th><td>Verifying ownership, provenance, and trust</td><td>Resource indexing, routing</td></tr>
                 <tr><th>ARD</th><td>Standard interface for querying and retrieving agentic resources across catalogs and registries</td><td>Content management, signing, cross-registry federation</td></tr>
-                <tr><th>Platform registries</th><td>Onboarding, hosting, billing, developer experience</td><td>Cross-platform and cross-community discovery</td></tr>
+                <tr><th>Platform registries</th><td>Onboarding, lifecycle management, billing, observability, and compliance</td><td>Cross-platform and cross-community discovery</td></tr>
                 <tr><th>Telecom / IoT / Sovereign</th><td>Sector governance, carrier integration, national compliance</td><td>Bridging into a global index</td></tr>
               </tbody>
             </table>
@@ -212,7 +212,7 @@
         </section>
 
         <section id="references">
-          <h2>References</h2>
+          <h2>Further reading</h2>
           <div class="linkrows">
             <a class="linkrow" href="https://arxiv.org/abs/2507.14263" target="_blank" rel="noopener">
               <span class="lr-kind">arXiv 2507.14263</span>
@@ -221,7 +221,7 @@
             </a>
             <a class="linkrow" href="https://arxiv.org/abs/2508.03101" target="_blank" rel="noopener">
               <span class="lr-kind">arXiv 2508.03101</span>
-              <span class="lr-main"><h3>Using the NANDA Index Architecture in Practice</h3><p>An enterprise perspective: Zero Trust Agentic Access and interoperability across MCP, A2A, and NLWeb.</p></span>
+              <span class="lr-main"><h3>Using the NANDA Index Architecture in Practice</h3><p>An enterprise perspective on the NANDA Index architecture.</p></span>
               <span class="lr-arrow">↗</span>
             </a>
             <a class="linkrow" href="https://outshift.cisco.com/blog/ai-ml/outshift-mit-agentic-web" target="_blank" rel="noopener">
@@ -239,8 +239,8 @@
               <span class="lr-main"><h3>AI Catalog</h3><p>The typed, nestable index-record format that NandaIndex entries are built on.</p></span>
               <span class="lr-arrow">↗</span>
             </a>
-            <a class="linkrow" href="https://github.com/ards-project/docs" target="_blank" rel="noopener">
-              <span class="lr-kind">ards-project</span>
+            <a class="linkrow" href="https://agenticresourcediscovery.org/" target="_blank" rel="noopener">
+              <span class="lr-kind">Specification</span>
               <span class="lr-main"><h3>ARD (Agentic Resource Discovery)</h3><p>A standard interface for querying and retrieving agentic resources across catalogs and registries.</p></span>
               <span class="lr-arrow">↗</span>
             </a>
