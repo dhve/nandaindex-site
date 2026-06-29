@@ -53,12 +53,15 @@
   var DATA = [
     {
       key: 'example-com', mono: 'EX', name: 'example.com', cat: 'catalog', verified: true, status: 'active',
+      displayName: 'Example.com Enterprise AI Catalog',
       identity: 'urn:ai:domain:example.com', domain: 'example.com',
       host: 'example.com /.well-known', region: 'n/a', ttl: 3600, version: 'n/a',
       mediaType: MEDIA.catalog, identityType: 'dns',
       url: 'https://example.com/.well-known/ai-catalog.json',
+      publisher: { identifier: 'urn:ai:domain:example.com', displayName: 'Example.com', identityType: 'dns' },
       meta: {
         'org.projectnanda.resolutionRole': 'nested-ai-catalog',
+        'org.projectnanda.preferredDiscovery': 'ai-catalog',
         'org.projectnanda.nandaIndexRole': 'optional-fallback-entry',
       },
       description: 'Enterprise, pure AI Catalog. Published at https://example.com/.well-known/ai-catalog.json and fetched directly; NandaIndex is not in the critical path. The entry is optional, useful for fallback, federation visibility, and anti-squatting.',
@@ -69,13 +72,24 @@
     },
     {
       key: 'skyblue-refunds', mono: 'SB', name: 'skyblue.com · refunds', cat: 'dns-aid', verified: true, status: 'active',
+      displayName: 'SkyBlue Refunds Agent DNS-AID Pointer',
       identity: 'urn:ai:domain:skyblue.com:agent:refunds', domain: 'skyblue.com',
       host: 'skyblue.com DNS', region: 'n/a', ttl: 600, version: 'n/a',
       mediaType: MEDIA['dns-aid'], identityType: 'dns',
-      data: { method: 'dns-aid', agentDiscoveryName: 'refunds._agents.skyblue.com' },
+      data: {
+        method: 'dns-aid',
+        domain: 'skyblue.com',
+        organizationDiscoveryName: '_agents.skyblue.com',
+        agentDiscoveryName: 'refunds._agents.skyblue.com',
+        serviceHint: 'refunds',
+        expectedResult: 'DNS-AID returns a gateway, catalog, or agent-card pointer controlled by skyblue.com',
+      },
+      publisher: { identifier: 'urn:ai:domain:skyblue.com', displayName: 'SkyBlue Airlines', identityType: 'dns' },
       meta: {
         'org.projectnanda.resolutionRole': 'dns-aid-pointer',
+        'org.projectnanda.preferredDiscovery': 'dns-aid',
         'org.projectnanda.authoritativeSystem': 'skyblue.com DNS',
+        'org.projectnanda.nandaIndexRole': 'federated-pointer',
       },
       description: 'Enterprise on DNS-AID at refunds._agents.skyblue.com. The entry carries inline routing data rather than a URL. NandaIndex makes the DNS-AID path reachable from the switchboard without replacing it.',
       tags: ['dns-aid', 'travel', 'refunds'],
@@ -85,29 +99,41 @@
     },
     {
       key: 'moonbakery-orders', mono: 'MB', name: 'moonbakery.com · orders', cat: 'card', verified: true, status: 'active',
+      displayName: 'Moon Bakery Orders Agent',
       identity: 'urn:ai:domain:moonbakery.com:agent:orders', domain: 'moonbakery.com',
       host: 'host39.org', region: 'AWS', ttl: 900, version: 'n/a',
       mediaType: MEDIA.card, identityType: 'dns',
       url: 'https://agentcards.host39.org/moonbakery.com/orders.json',
+      publisher: { identifier: 'urn:ai:domain:moonbakery.com', displayName: 'Moon Bakery', identityType: 'dns' },
       meta: {
+        'org.projectnanda.resolutionRole': 'smb-agent-card',
+        'org.projectnanda.preferredDiscovery': 'nandaindex',
         'org.projectnanda.agentCardHost': 'host39.org',
         'org.projectnanda.runtime.provider': 'AWS',
+        'org.projectnanda.runtime.url': 'https://moonbakery-orders.aws.example.com',
+        'org.projectnanda.auth.metadata': 'public',
         'org.projectnanda.auth.execution': 'payment_or_session_token_required',
       },
       description: 'SMB hosted card. Owns moonbakery.com but runs no enterprise infrastructure. Runtime, agent card, and domain sit with three separate providers, a demonstration of permissionless deployment: no enterprise gateway, no DNS certificate.',
       tags: ['smb', 'a2a-card', 'orders'],
-      agents: [{ name: 'orders', role: 'hosted-agent-card' }],
-      caps: ['hosted-agent-card'],
+      agents: [{ name: 'orders', role: 'smb-agent-card' }],
+      caps: ['smb-agent-card'],
       created: '2026-05-20', updated: '2026-06-24',
     },
     {
       key: 'john-hotmail', mono: 'JH', name: 'john@hotmail.com', cat: 'card', verified: false, status: 'pending',
+      displayName: "John's Personal Agent",
       identity: 'urn:ai:email:john@hotmail.com', domain: null,
       host: 'host39.org', region: 'Azure', ttl: 900, version: 'n/a',
       mediaType: MEDIA.card, identityType: 'email',
       url: 'https://agentcards.host39.org/personal/john%40hotmail.com/card.json',
+      publisher: { identifier: 'urn:ai:email:john@hotmail.com', displayName: 'John', identityType: 'email' },
       meta: {
         'org.projectnanda.resolutionRole': 'personal-agent-card',
+        'org.projectnanda.preferredDiscovery': 'nandaindex',
+        'org.projectnanda.agentCardHost': 'host39.org',
+        'org.projectnanda.runtime.provider': 'Azure',
+        'org.projectnanda.runtime.url': 'https://john-agent.azure.com',
         'org.projectnanda.auth.metadata': 'public_minimal',
         'org.projectnanda.auth.execution': 'user_consent_required',
       },
@@ -119,11 +145,15 @@
     },
     {
       key: 'agntcy-ads', mono: 'AG', name: 'AGNTCY Agent Directory (ADS)', cat: 'directory', verified: true, status: 'active',
+      displayName: 'AGNTCY Agent Directory (ADS)',
       identity: 'urn:ai:system:agntcy:agent-directory', domain: null,
       host: 'AGNTCY ADS', region: 'DHT', ttl: 3600, version: 'n/a',
       mediaType: MEDIA.catalog, identityType: 'system',
+      url: 'https://directory.agntcy.org/ard',
+      publisher: { identifier: 'urn:ai:system:agntcy', displayName: 'AGNTCY', identityType: 'system' },
       meta: {
         'org.projectnanda.resolutionRole': 'agntcy-ads',
+        'org.projectnanda.preferredDiscovery': 'ard',
         'org.projectnanda.addressing': 'oci-aligned',
         'org.projectnanda.integrity': 'sigstore',
       },
@@ -135,10 +165,13 @@
     },
     {
       key: 'ard-finder', mono: 'AR', name: 'ARD finder API', cat: 'directory', verified: true, status: 'active',
+      displayName: 'ARD Finder API',
       identity: 'urn:ai:system:ard:finder', domain: null,
       host: 'ARD read-only API', region: 'n/a', ttl: 3600, version: 'n/a',
       mediaType: MEDIA.catalog, identityType: 'system',
-      meta: { 'org.projectnanda.resolutionRole': 'ard' },
+      url: 'https://ard.projectnanda.org/find',
+      publisher: { identifier: 'urn:ai:system:ard', displayName: 'ARD', identityType: 'system' },
+      meta: { 'org.projectnanda.resolutionRole': 'ard', 'org.projectnanda.preferredDiscovery': 'ard' },
       description: 'Read-only standard finder API across conforming registries. Allows external agents to search the directory through the same interface used with other ARD-conforming systems (Hugging Face, GitHub).',
       tags: ['ard', 'finder-api'],
       agents: [{ name: 'finder', role: 'ard' }],
@@ -147,9 +180,12 @@
     },
     {
       key: 'platform-registry', mono: 'PR', name: 'Platform Registry', cat: 'directory', verified: true, status: 'active',
+      displayName: 'Platform Registry',
       identity: 'urn:ai:system:platform:registry', domain: null,
       host: 'Platform registry', region: 'n/a', ttl: 3600, version: 'n/a',
       mediaType: MEDIA.catalog, identityType: 'system',
+      url: 'https://registry.platform.example.com/ard',
+      publisher: { identifier: 'urn:ai:system:platform', displayName: 'Platform Registry', identityType: 'system' },
       meta: { 'org.projectnanda.resolutionRole': 'platform-registry' },
       description: 'Onboarding, hosting, billing, developer experience. Bridged for cross-platform and cross-community discovery.',
       tags: ['platform', 'registry'],
@@ -159,9 +195,12 @@
     },
     {
       key: 'enterprise-gateway', mono: 'GW', name: 'Enterprise Gateway', cat: 'gateway', verified: true, status: 'active',
+      displayName: 'Enterprise Gateway',
       identity: 'urn:ai:system:gateway:enterprise', domain: null,
       host: 'Enterprise gateway', region: 'n/a', ttl: 600, version: 'n/a',
       mediaType: MEDIA.catalog, identityType: 'system',
+      url: 'https://gateway.enterprise.example.com/.well-known/agents',
+      publisher: { identifier: 'urn:ai:system:gateway', displayName: 'Enterprise Gateway', identityType: 'system' },
       meta: { 'org.projectnanda.resolutionRole': 'gateway' },
       description: 'Access control, privacy, throttling, compliance. Bridged for discovery of agents not behind that gateway.',
       tags: ['gateway', 'access-control', 'compliance'],
@@ -171,9 +210,12 @@
     },
     {
       key: 'ans-did', mono: 'AN', name: 'ANS / DIDs', cat: 'gateway', verified: true, status: 'active',
+      displayName: 'ANS / DIDs',
       identity: 'urn:ai:system:ans:did', domain: null,
       host: 'ANS / DID resolver', region: 'n/a', ttl: 3600, version: 'n/a',
       mediaType: MEDIA.catalog, identityType: 'system',
+      url: 'https://resolver.ans.example.com',
+      publisher: { identifier: 'urn:ai:system:ans', displayName: 'ANS / DID', identityType: 'system' },
       meta: { 'org.projectnanda.resolutionRole': 'ans-did' },
       description: 'Identity and ownership proof. Bridged for resource indexing and routing.',
       tags: ['ans', 'did', 'identity'],
@@ -183,9 +225,12 @@
     },
     {
       key: 'telecom-registry', mono: 'TE', name: 'Telecom Registry', cat: 'emerging', verified: false, status: 'pending',
+      displayName: 'Telecom Registry',
       identity: 'urn:ai:system:telecom:registry', domain: null,
       host: 'Carrier registry', region: 'n/a', ttl: 3600, version: 'n/a',
       mediaType: MEDIA.catalog, identityType: 'system',
+      url: 'https://registry.telecom.example.com/ard',
+      publisher: { identifier: 'urn:ai:system:telecom', displayName: 'Telecom Operator', identityType: 'system' },
       meta: { 'org.projectnanda.resolutionRole': 'telecom-registry' },
       description: 'Telecom registries will integrate agents into carrier infrastructure. Sector-specific governance and carrier integration, bridged into the global index.',
       tags: ['telecom', 'carrier'],
@@ -195,9 +240,12 @@
     },
     {
       key: 'iot-edgeai', mono: 'IO', name: 'IoT / EdgeAI Registry', cat: 'emerging', verified: false, status: 'pending',
+      displayName: 'IoT / EdgeAI Registry',
       identity: 'urn:ai:system:iot:edgeai', domain: null,
       host: 'IoT / EdgeAI registry', region: 'n/a', ttl: 3600, version: 'n/a',
       mediaType: MEDIA.catalog, identityType: 'system',
+      url: 'https://registry.iot-edge.example.com/ard',
+      publisher: { identifier: 'urn:ai:system:iot', displayName: 'IoT / EdgeAI Registry', identityType: 'system' },
       meta: { 'org.projectnanda.resolutionRole': 'iot-registry' },
       description: 'IoT and EdgeAI systems will develop their own lightweight discovery mechanisms. Bridged into the global index through a single entry.',
       tags: ['iot', 'edgeai'],
@@ -207,9 +255,12 @@
     },
     {
       key: 'sovereign-directory', mono: 'SO', name: 'Sovereign National Directory', cat: 'emerging', verified: false, status: 'pending',
+      displayName: 'Sovereign National Directory',
       identity: 'urn:ai:system:sovereign:national-directory', domain: null,
       host: 'National directory', region: 'n/a', ttl: 3600, version: 'n/a',
       mediaType: MEDIA.catalog, identityType: 'system',
+      url: 'https://directory.sovereign.example.gov/ard',
+      publisher: { identifier: 'urn:ai:system:sovereign', displayName: 'National Authority', identityType: 'system' },
       meta: { 'org.projectnanda.resolutionRole': 'sovereign-registry' },
       description: 'Sovereign national directories will be required by some governments. Sector-specific governance and national compliance, bridged into the global index.',
       tags: ['sovereign', 'national', 'compliance'],
@@ -258,10 +309,15 @@
   }
 
   function toJSON(record) {
-    // The AI Catalog Catalog Entry: identifier maps to a discovery object.
-    var rec = { identifier: record.identity, mediaType: record.mediaType };
+    // AI Catalog-compatible index record: identifier maps to a discovery object.
+    var rec = { identifier: record.identity };
+    if (record.displayName) rec.displayName = record.displayName;
+    rec.mediaType = record.mediaType;
     if (record.url) rec.url = record.url;
     if (record.data) rec.data = record.data;
+    rec.description = record.description;
+    rec.tags = record.tags || [];
+    if (record.publisher) rec.publisher = record.publisher;
     rec.metadata = record.meta || {};
     return JSON.stringify(rec, null, 2);
   }
@@ -270,7 +326,11 @@
     var lines = [];
     lines.push('# ' + record.name);
     lines.push('');
+    lines.push('- **Display name:** ' + (record.displayName || record.name));
     lines.push('- **Identifier:** `' + record.identity + '`');
+    if (record.publisher) {
+      lines.push('- **Publisher:** ' + record.publisher.displayName + ' (`' + record.publisher.identifier + '`, ' + record.publisher.identityType + ')');
+    }
     lines.push('- **Mechanism:** ' + (CAT_LABEL[record.cat] || record.cat));
     lines.push('- **Media type:** `' + record.mediaType + '`');
     lines.push('- **Identity type:** ' + record.identityType);

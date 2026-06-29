@@ -231,10 +231,11 @@
             <table class="spec-table">
               <thead><tr><th>NandaIndex concept</th><th>Implementation</th></tr></thead>
               <tbody>
-                <tr><th>Entry</th><td>AI Catalog Catalog Entry</td></tr>
-                <tr><th>Identity</th><td>URN / URI identifier</td></tr>
-                <tr><th>Target</th><td>URL or inline routing data</td></tr>
-                <tr><th>Routing hints</th><td>Metadata fields</td></tr>
+                <tr><th>Entry</th><td>AI Catalog-compatible index record</td></tr>
+                <tr><th>Identity</th><td>URN / URI <code>identifier</code>, plus a <code>displayName</code></td></tr>
+                <tr><th>Target</th><td>A <code>url</code>, or inline routing <code>data</code></td></tr>
+                <tr><th>Describe</th><td><code>description</code>, <code>tags</code>, and <code>publisher</code></td></tr>
+                <tr><th>Routing hints</th><td>Metadata fields (<code>org.projectnanda.*</code>)</td></tr>
               </tbody>
             </table>
           </div>
@@ -282,10 +283,19 @@
             </p>
             <pre class="codeblock">{
   "identifier": "urn:ai:domain:example.com",
+  "displayName": "Example.com Enterprise AI Catalog",
   "mediaType": "application/ai-catalog+json",
   "url": "https://example.com/.well-known/ai-catalog.json",
+  "description": "Public enterprise AI Catalog for agents, tools, skills, gateways, and AI resources exposed by example.com.",
+  "tags": ["enterprise", "ai-catalog", "public-agent-discovery"],
+  "publisher": {
+    "identifier": "urn:ai:domain:example.com",
+    "displayName": "Example.com",
+    "identityType": "dns"
+  },
   "metadata": {
     "org.projectnanda.resolutionRole": "nested-ai-catalog",
+    "org.projectnanda.preferredDiscovery": "ai-catalog",
     "org.projectnanda.nandaIndexRole": "optional-fallback-entry"
   }
 }</pre>
@@ -301,14 +311,28 @@
             </p>
             <pre class="codeblock">{
   "identifier": "urn:ai:domain:skyblue.com:agent:refunds",
+  "displayName": "SkyBlue Refunds Agent DNS-AID Pointer",
   "mediaType": "application/vnd.dns-aid+json",
   "data": {
     "method": "dns-aid",
-    "agentDiscoveryName": "refunds._agents.skyblue.com"
+    "domain": "skyblue.com",
+    "organizationDiscoveryName": "_agents.skyblue.com",
+    "agentDiscoveryName": "refunds._agents.skyblue.com",
+    "serviceHint": "refunds",
+    "expectedResult": "DNS-AID returns a gateway, catalog, or agent-card pointer controlled by skyblue.com"
+  },
+  "description": "Federated AI Catalog entry pointing to SkyBlue's DNS-AID-based discovery path for its refunds agent.",
+  "tags": ["enterprise", "dns-aid", "airline", "refunds", "gateway"],
+  "publisher": {
+    "identifier": "urn:ai:domain:skyblue.com",
+    "displayName": "SkyBlue Airlines",
+    "identityType": "dns"
   },
   "metadata": {
     "org.projectnanda.resolutionRole": "dns-aid-pointer",
-    "org.projectnanda.authoritativeSystem": "skyblue.com DNS"
+    "org.projectnanda.preferredDiscovery": "dns-aid",
+    "org.projectnanda.authoritativeSystem": "skyblue.com DNS",
+    "org.projectnanda.nandaIndexRole": "federated-pointer"
   }
 }</pre>
             <p class="resolution"><span class="rl">Resolution</span><br />NandaIndex → DNS-AID lookup → SkyBlue gateway or Agent Card → auth → agent.</p>
@@ -323,11 +347,23 @@
             </p>
             <pre class="codeblock">{
   "identifier": "urn:ai:domain:moonbakery.com:agent:orders",
+  "displayName": "Moon Bakery Orders Agent",
   "mediaType": "application/a2a-agent-card+json",
   "url": "https://agentcards.host39.org/moonbakery.com/orders.json",
+  "description": "Ordering agent for Moon Bakery. Supports menu lookup, order placement, pickup scheduling, and order status.",
+  "tags": ["smb", "bakery", "orders", "commerce", "a2a-agent-card"],
+  "publisher": {
+    "identifier": "urn:ai:domain:moonbakery.com",
+    "displayName": "Moon Bakery",
+    "identityType": "dns"
+  },
   "metadata": {
+    "org.projectnanda.resolutionRole": "smb-agent-card",
+    "org.projectnanda.preferredDiscovery": "nandaindex",
     "org.projectnanda.agentCardHost": "host39.org",
     "org.projectnanda.runtime.provider": "AWS",
+    "org.projectnanda.runtime.url": "https://moonbakery-orders.aws.example.com",
+    "org.projectnanda.auth.metadata": "public",
     "org.projectnanda.auth.execution": "payment_or_session_token_required"
   }
 }</pre>
@@ -343,10 +379,22 @@
             </p>
             <pre class="codeblock">{
   "identifier": "urn:ai:email:john@hotmail.com",
+  "displayName": "John's Personal Agent",
   "mediaType": "application/a2a-agent-card+json",
   "url": "https://agentcards.host39.org/personal/john%40hotmail.com/card.json",
+  "description": "Personal agent associated with john@hotmail.com. Public metadata is minimal; private actions require user consent.",
+  "tags": ["personal-agent", "individual", "email-identity", "a2a-agent-card"],
+  "publisher": {
+    "identifier": "urn:ai:email:john@hotmail.com",
+    "displayName": "John",
+    "identityType": "email"
+  },
   "metadata": {
     "org.projectnanda.resolutionRole": "personal-agent-card",
+    "org.projectnanda.preferredDiscovery": "nandaindex",
+    "org.projectnanda.agentCardHost": "host39.org",
+    "org.projectnanda.runtime.provider": "Azure",
+    "org.projectnanda.runtime.url": "https://john-agent.azure.com",
     "org.projectnanda.auth.metadata": "public_minimal",
     "org.projectnanda.auth.execution": "user_consent_required"
   }

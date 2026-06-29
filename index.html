@@ -94,9 +94,10 @@
             <table class="spec-table">
               <thead><tr><th>Concept</th><th>Implementation</th></tr></thead>
               <tbody>
-                <tr><th>Entry</th><td>AI Catalog Catalog Entry</td></tr>
-                <tr><th>Identity</th><td>URN / URI identifier</td></tr>
-                <tr><th>Target</th><td>URL, or inline routing data</td></tr>
+                <tr><th>Entry</th><td>AI Catalog-compatible index record</td></tr>
+                <tr><th>Identity</th><td>URN / URI <code>identifier</code>, plus a human-readable <code>displayName</code></td></tr>
+                <tr><th>Target</th><td>A <code>url</code>, or inline routing <code>data</code></td></tr>
+                <tr><th>Describe</th><td><code>description</code>, <code>tags</code>, and <code>publisher</code></td></tr>
                 <tr><th>Routing hints</th><td>Metadata fields (<code>org.projectnanda.*</code>)</td></tr>
               </tbody>
             </table>
@@ -162,18 +163,32 @@
 
           <h3>Anatomy of an entry</h3>
           <p>
-            Every entry carries four things: a stable <code>identifier</code>, the <code>mediaType</code>
-            of the target, the target itself (a <code>url</code> or inline <code>data</code>), and
-            <code>metadata</code> routing hints. This entry targets a hosted agent card by URL; the
-            runtime, the card host, and the domain are three separate providers.
+            Every entry is an AI Catalog-compatible index record. It carries a stable
+            <code>identifier</code> and a human-readable <code>displayName</code>, the
+            <code>mediaType</code> of the target, the target itself (a <code>url</code> or inline
+            <code>data</code>), a <code>description</code> and <code>tags</code>, the
+            <code>publisher</code>, and <code>metadata</code> routing hints. This entry targets a hosted
+            agent card by URL; the runtime, the card host, and the domain are three separate providers.
           </p>
           <pre class="codeblock">{
   "identifier": "urn:ai:domain:moonbakery.com:agent:orders",
+  "displayName": "Moon Bakery Orders Agent",
   "mediaType": "application/a2a-agent-card+json",
   "url": "https://agentcards.host39.org/moonbakery.com/orders.json",
+  "description": "SMB hosted card. Owns moonbakery.com but runs no enterprise infrastructure. Runtime, agent card, and domain sit with three separate providers, a demonstration of permissionless deployment: no enterprise gateway, no DNS certificate.",
+  "tags": ["smb", "a2a-card", "orders"],
+  "publisher": {
+    "identifier": "urn:ai:domain:moonbakery.com",
+    "displayName": "Moon Bakery",
+    "identityType": "dns"
+  },
   "metadata": {
+    "org.projectnanda.resolutionRole": "smb-agent-card",
+    "org.projectnanda.preferredDiscovery": "nandaindex",
     "org.projectnanda.agentCardHost": "host39.org",
     "org.projectnanda.runtime.provider": "AWS",
+    "org.projectnanda.runtime.url": "https://moonbakery-orders.aws.example.com",
+    "org.projectnanda.auth.metadata": "public",
     "org.projectnanda.auth.execution": "payment_or_session_token_required"
   }
 }</pre>
@@ -268,7 +283,7 @@
   </footer>
 
   <!-- catalog engine provides DATA + HOPS for the Try Resolve widget (init no-ops without a #grid) -->
-  <script src="explore.js"></script>
+  <script src="explore.js?v=5"></script>
   <script>
     // section-highlight in the contents rail
     (function () {
